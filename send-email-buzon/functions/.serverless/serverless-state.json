@@ -1,0 +1,763 @@
+{
+  "service": {
+    "service": "imove-reports-ercot",
+    "serviceObject": {
+      "name": "imove-reports-ercot"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "dev",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1"
+      },
+      "apiGateway": {
+        "apiKeys": [
+          {
+            "free": [
+              "imove-reports-ercot-free-key-dev"
+            ]
+          }
+        ],
+        "usagePlan": [
+          {
+            "free": {
+              "quota": {
+                "limit": 100000,
+                "period": "MONTH",
+                "offset": 2
+              },
+              "throttle": {
+                "burstLimit": 200,
+                "rateLimit": 100
+              }
+            }
+          }
+        ]
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "FilterUnderscoredataLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/imove-reports-ercot-dev-filter_data"
+            }
+          },
+          "GetUnderscoresignalsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/imove-reports-ercot-dev-get_signals"
+            }
+          },
+          "SendUnderscoreerrorUnderscoremessageLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/imove-reports-ercot-dev-send_error_message"
+            }
+          },
+          "FilterUnderscoredataLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/imove-reports-ercot/dev/1765843674677-2025-12-16T00:07:54.677Z/imove-reports-ercot.zip"
+              },
+              "Handler": "lambda_handler.filter_data",
+              "Runtime": "python3.12",
+              "FunctionName": "imove-reports-ercot-dev-filter_data",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "Name",
+                  "Value": "ReportesErcot"
+                },
+                {
+                  "Key": "ProjectName",
+                  "Value": "ErcotReportsApi"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/ReportesErcotRole"
+            },
+            "DependsOn": [
+              "FilterUnderscoredataLogGroup"
+            ]
+          },
+          "GetUnderscoresignalsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/imove-reports-ercot/dev/1765843674677-2025-12-16T00:07:54.677Z/imove-reports-ercot.zip"
+              },
+              "Handler": "lambda_handler.get_signals",
+              "Runtime": "python3.12",
+              "FunctionName": "imove-reports-ercot-dev-get_signals",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "Name",
+                  "Value": "ReportesErcot"
+                },
+                {
+                  "Key": "ProjectName",
+                  "Value": "ErcotReportsApi"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/ReportesErcotRole"
+            },
+            "DependsOn": [
+              "GetUnderscoresignalsLogGroup"
+            ]
+          },
+          "SendUnderscoreerrorUnderscoremessageLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/imove-reports-ercot/dev/1765843674677-2025-12-16T00:07:54.677Z/imove-reports-ercot.zip"
+              },
+              "Handler": "lambda_handler.send_error_message",
+              "Runtime": "python3.12",
+              "FunctionName": "imove-reports-ercot-dev-send_error_message",
+              "MemorySize": 1024,
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "Name",
+                  "Value": "ReportesErcot"
+                },
+                {
+                  "Key": "ProjectName",
+                  "Value": "ErcotReportsApi"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/ReportesErcotRole"
+            },
+            "DependsOn": [
+              "SendUnderscoreerrorUnderscoremessageLogGroup"
+            ]
+          },
+          "FilterUnderscoredataLambdaVersionY8JRQMyVkPkiatAKHgYiO7DWH2YGEY5EpJXEGU93KQ": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "FilterUnderscoredataLambdaFunction"
+              },
+              "CodeSha256": "AUwthfiZH88jT7bcssICHn/vOt3+QLSg06nTgYV2Eq0="
+            }
+          },
+          "GetUnderscoresignalsLambdaVersion043zbyQrKtL8udrhzK6yDOEhJFqhWhhh8tSfyn6CLA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "GetUnderscoresignalsLambdaFunction"
+              },
+              "CodeSha256": "AUwthfiZH88jT7bcssICHn/vOt3+QLSg06nTgYV2Eq0="
+            }
+          },
+          "SendUnderscoreerrorUnderscoremessageLambdaVersionXWilwZMHAkTHJqR497J2B3ju1wqZZsiHz9bIOwKvMkY": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "SendUnderscoreerrorUnderscoremessageLambdaFunction"
+              },
+              "CodeSha256": "AUwthfiZH88jT7bcssICHn/vOt3+QLSg06nTgYV2Eq0="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "dev-imove-reports-ercot",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceFilter": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "filter",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceGetsignals": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "get_signals",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayResourceSenderrormessage": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "send_error_message",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodFilterPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceFilter"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": true,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "FilterUnderscoredataLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "FilterUnderscoredataLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodGetsignalsPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceGetsignals"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": true,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "GetUnderscoresignalsLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "GetUnderscoresignalsLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayMethodSenderrormessagePost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceSenderrormessage"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": true,
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "SendUnderscoreerrorUnderscoremessageLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "SendUnderscoreerrorUnderscoremessageLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1765843668626": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "dev"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodFilterPost",
+              "ApiGatewayMethodGetsignalsPost",
+              "ApiGatewayMethodSenderrormessagePost"
+            ]
+          },
+          "ApiGatewayApiKeyFree1": {
+            "Type": "AWS::ApiGateway::ApiKey",
+            "Properties": {
+              "Enabled": true,
+              "Name": "imove-reports-ercot-free-key-dev",
+              "StageKeys": [
+                {
+                  "RestApiId": {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "StageName": "dev"
+                }
+              ]
+            },
+            "DependsOn": "ApiGatewayDeployment1765843668626"
+          },
+          "ApiGatewayUsagePlanFree": {
+            "Type": "AWS::ApiGateway::UsagePlan",
+            "DependsOn": "ApiGatewayDeployment1765843668626",
+            "Properties": {
+              "ApiStages": [
+                {
+                  "ApiId": {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "Stage": "dev"
+                }
+              ],
+              "Description": "Usage plan \"free\" for imove-reports-ercot dev stage",
+              "UsagePlanName": "imove-reports-ercot-free-dev",
+              "Quota": {
+                "Limit": 100000,
+                "Offset": 2,
+                "Period": "MONTH"
+              },
+              "Throttle": {
+                "BurstLimit": 200,
+                "RateLimit": 100
+              }
+            }
+          },
+          "ApiGatewayUsagePlanKeyFree1": {
+            "Type": "AWS::ApiGateway::UsagePlanKey",
+            "Properties": {
+              "KeyId": {
+                "Ref": "ApiGatewayApiKeyFree1"
+              },
+              "KeyType": "API_KEY",
+              "UsagePlanId": {
+                "Ref": "ApiGatewayUsagePlanFree"
+              }
+            }
+          },
+          "FilterUnderscoredataLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "FilterUnderscoredataLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "GetUnderscoresignalsLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "GetUnderscoresignalsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          },
+          "SendUnderscoreerrorUnderscoremessageLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "SendUnderscoreerrorUnderscoremessageLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-imove-reports-ercot-dev-ServerlessDeploymentBucketName"
+            }
+          },
+          "FilterUnderscoredataLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "FilterUnderscoredataLambdaVersionY8JRQMyVkPkiatAKHgYiO7DWH2YGEY5EpJXEGU93KQ"
+            },
+            "Export": {
+              "Name": "sls-imove-reports-ercot-dev-FilterUnderscoredataLambdaFunctionQualifiedArn"
+            }
+          },
+          "GetUnderscoresignalsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "GetUnderscoresignalsLambdaVersion043zbyQrKtL8udrhzK6yDOEhJFqhWhhh8tSfyn6CLA"
+            },
+            "Export": {
+              "Name": "sls-imove-reports-ercot-dev-GetUnderscoresignalsLambdaFunctionQualifiedArn"
+            }
+          },
+          "SendUnderscoreerrorUnderscoremessageLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "SendUnderscoreerrorUnderscoremessageLambdaVersionXWilwZMHAkTHJqR497J2B3ju1wqZZsiHz9bIOwKvMkY"
+            },
+            "Export": {
+              "Name": "sls-imove-reports-ercot-dev-SendUnderscoreerrorUnderscoremessageLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/dev"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-imove-reports-ercot-dev-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "my-region": "us-east-1",
+      "stage": "dev",
+      "config": {
+        "prod": {
+          "memory_size": 1024,
+          "account_id": "857285351963"
+        },
+        "dev": {
+          "memory_size": 1024,
+          "account_id": "857285351963"
+        }
+      },
+      "pythonRequirements": {
+        "useDownloadCache": true,
+        "useStaticCache": true,
+        "cacheLocation": "../cache_python_requirements_plugin",
+        "staticCacheMaxVersions": 5,
+        "fileName": "requirements.txt"
+      }
+    },
+    "plugins": [
+      "serverless-offline"
+    ],
+    "pluginsData": {},
+    "functions": {
+      "filter_data": {
+        "handler": "lambda_handler.filter_data",
+        "events": [
+          {
+            "http": {
+              "method": "post",
+              "path": "filter",
+              "private": true,
+              "cors": false,
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "timeout": 30,
+        "role": "arn:aws:iam::857285351963:role/ReportesErcotRole",
+        "tags": {
+          "Name": "ReportesErcot",
+          "ProjectName": "ErcotReportsApi"
+        },
+        "name": "imove-reports-ercot-dev-filter_data",
+        "module": ".",
+        "package": {},
+        "memory": 1024,
+        "runtime": "python3.12",
+        "vpc": {},
+        "versionLogicalId": "FilterUnderscoredataLambdaVersionY8JRQMyVkPkiatAKHgYiO7DWH2YGEY5EpJXEGU93KQ"
+      },
+      "get_signals": {
+        "handler": "lambda_handler.get_signals",
+        "events": [
+          {
+            "http": {
+              "method": "post",
+              "path": "get_signals",
+              "private": true,
+              "cors": false,
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "timeout": 30,
+        "role": "arn:aws:iam::857285351963:role/ReportesErcotRole",
+        "tags": {
+          "Name": "ReportesErcot",
+          "ProjectName": "ErcotReportsApi"
+        },
+        "name": "imove-reports-ercot-dev-get_signals",
+        "module": ".",
+        "package": {},
+        "memory": 1024,
+        "runtime": "python3.12",
+        "vpc": {},
+        "versionLogicalId": "GetUnderscoresignalsLambdaVersion043zbyQrKtL8udrhzK6yDOEhJFqhWhhh8tSfyn6CLA"
+      },
+      "send_error_message": {
+        "handler": "lambda_handler.send_error_message",
+        "events": [
+          {
+            "http": {
+              "method": "post",
+              "path": "send_error_message",
+              "private": true,
+              "cors": false,
+              "integration": "AWS_PROXY"
+            }
+          }
+        ],
+        "timeout": 30,
+        "role": "arn:aws:iam::857285351963:role/ReportesErcotRole",
+        "tags": {
+          "Name": "ReportesErcot",
+          "ProjectName": "ErcotReportsApi"
+        },
+        "name": "imove-reports-ercot-dev-send_error_message",
+        "module": ".",
+        "package": {},
+        "memory": 1024,
+        "runtime": "python3.12",
+        "vpc": {},
+        "versionLogicalId": "SendUnderscoreerrorUnderscoremessageLambdaVersionXWilwZMHAkTHJqR497J2B3ju1wqZZsiHz9bIOwKvMkY"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless",
+    "initialServerlessConfig": {
+      "service": "imove-reports-ercot",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
+      "plugins": {
+        "$ref": "$[\"service\"][\"plugins\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      }
+    },
+    "appId": null,
+    "orgId": null,
+    "layers": {},
+    "artifact": "/Users/ivanmoranvelazquez/IdeaProjects/hist/reportes_ercot/functions/.serverless/imove-reports-ercot.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/imove-reports-ercot/dev/1765843674677-2025-12-16T00:07:54.677Z",
+    "artifact": "imove-reports-ercot.zip"
+  }
+}

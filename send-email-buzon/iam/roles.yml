@@ -1,0 +1,18 @@
+Resources:
+  ReportesErcotRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: ReportesErcotRole
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Statement:
+        - Effect: Allow
+          Principal:
+            Service: lambda.amazonaws.com
+          Action:
+          - sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - Ref: S3ErcotReportsPolicy
+        - Ref: SecretsErcotReportsPolicy
+        - Ref: LayersErcotReportsPolicy

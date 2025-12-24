@@ -1,0 +1,44 @@
+Resources:
+  S3ErcotReportsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: S3ErcotReportsPolicy
+      Description: Lambda policy to allow access to s3 api info
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+            Resource:
+              - "arn:aws:s3:::medidores-ercot-dev"
+              - "arn:aws:s3:::medidores-ercot-dev/*"
+  SecretsErcotReportsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: SecretsErcotReportsPolicy
+      Description: Lambda policy to allow access to secrets manager apan model
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - secretsmanager:GetSecretValue
+            Resource:
+              - "arn:aws:secretsmanager:us-east-1:857285351963:secret:dev/energrid/db-VJsD0e"
+  LayersErcotReportsPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: LayersErcotReportsPolicy
+      Description: Lambda policy to allow access to secrets manager apan model
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - lambda:GetLayerVersion
+            Resource:
+              - "*"

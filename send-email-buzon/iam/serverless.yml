@@ -1,0 +1,23 @@
+service: imove-reportes-ercot-role
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    prod:
+      account_id: '857285351963'
+    dev:
+      account_id: '857285351963'
+
+
+resources:
+- ${file(roles.yml)}
+- ${file(policies.yml)}
