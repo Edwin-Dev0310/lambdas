@@ -1,82 +1,46 @@
-service: imove-reports-ercot
+service: mflores-send-support-mailbox-functions
 
 provider:
   name: aws
-  runtime: python3.12
+  runtime: python3.14
   stage: ${self:custom.stage}
   region: ${self:custom.my-region}
+  httpApi: # Configuración del HTTP API
+    cors: true
   environment:
     REGION: ${self:provider.region}
-  apiGateway:
-    apiKeys:
-      - free:
-          - ${self:service}-free-key-${self:custom.stage}
-    usagePlan:
-      - free:
-          quota:
-            limit: 100000
-            period: MONTH
-            offset: 2
-          throttle:
-            burstLimit: 200
-            rateLimit: 100
-
+    STAGE: ${self:custom.stage}
+    DESTINATION_EMAIL: buzon@invexcapital.com
+    SENDER_EMAIL: buzon@invexcapital.com
+    
 custom:
-  my-region: ${opt:region, 'us-east-1'}
   stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
   config:
-    prod:
-      memory_size: 1024
-      account_id: '857285351963'
     dev:
+      my-region: us-east-1
+      account_id: "871467914043"
       memory_size: 1024
-      account_id: '857285351963'
+    prd:
+      my-region: us-east-1
+      account_id: "871467914043"
+      memory_size: 1024
   pythonRequirements:
     useDownloadCache: true
     useStaticCache: true
-    cacheLocation: '../cache_python_requirements_plugin'
+    cacheLocation: "../cache_python_requirements_plugin"
     staticCacheMaxVersions: 5
     fileName: requirements.txt
 
-plugins:
-  - serverless-offline
 functions:
-  filter_data:
-    handler: lambda_handler.filter_data
-    events:
-      - http:
-          method: POST
-          path: /filter
-          private: true
-          cors: false
-    timeout: 30
-    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/ReportesErcotRole
+  sendEmail:
+    handler: handler.send_email
+    role: arn:aws:iam::${self:custom.config.dev.account_id}:role/InvexCapitalLambdaSendEmailMailboxRole
     tags:
-      Name: ReportesErcot
-      ProjectName: ErcotReportsApi
-  get_signals:
-    handler: lambda_handler.get_signals
+      dev: mflores
+      project-name: invex-capital-buzon
+      env: ${self:custom.stage}
     events:
-      - http:
+      - httpApi:
+          path: /send-email-mailbox-support
           method: POST
-          path: /get_signals
-          private: true
-          cors: false
-    timeout: 30
-    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/ReportesErcotRole
-    tags:
-      Name: ReportesErcot
-      ProjectName: ErcotReportsApi
-  send_error_message:
-    handler: lambda_handler.send_error_message
-    events:
-      - http:
-          method: POST
-          path: /send_error_message
-          private: true
-          cors: false
-    timeout: 30
-    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/ReportesErcotRole
-    tags:
-      Name: ReportesErcot
-      ProjectName: ErcotReportsApi

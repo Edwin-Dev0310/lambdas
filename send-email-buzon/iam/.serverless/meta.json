@@ -1,14 +1,14 @@
 {
-  "/Users/ivanmoranvelazquez/IdeaProjects/hist/reportes_ercot/iam/serverless.yml": {
-    "versionFramework": "4.23.0",
-    "servicePath": "/Users/ivanmoranvelazquez/IdeaProjects/hist/reportes_ercot/iam/serverless.yml",
+  "/Users/migueledwinflores/Proyects/Lambdas/send-email-buzon/iam/serverless.yml": {
+    "versionFramework": "4.29.3",
+    "servicePath": "/Users/migueledwinflores/Proyects/Lambdas/send-email-buzon/iam/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
-      "service": "imove-reportes-ercot-role",
+      "service": "mflores-invexcapital-send-support-mailbox-role",
       "provider": {
         "name": "aws",
         "runtime": "python3.12",
-        "stage": "dev",
+        "stage": "prod",
         "region": "us-east-1",
         "environment": {
           "REGION": "us-east-1"
@@ -18,12 +18,13 @@
           "AWSTemplateFormatVersion": "2010-09-09",
           "Description": "The AWS CloudFormation template for this Serverless application",
           "Resources": {
-            "ReportesErcotRole": {
+            "InvexCapitalLambdaSendEmailMailboxRole": {
               "Type": "AWS::IAM::Role",
               "Properties": {
-                "RoleName": "ReportesErcotRole",
+                "RoleName": "InvexCapitalLambdaSendEmailMailboxRole",
                 "MaxSessionDuration": 3600,
                 "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
                   "Statement": [
                     {
                       "Effect": "Allow",
@@ -39,22 +40,16 @@
                 "ManagedPolicyArns": [
                   "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
                   {
-                    "Ref": "S3ErcotReportsPolicy"
-                  },
-                  {
-                    "Ref": "SecretsErcotReportsPolicy"
-                  },
-                  {
-                    "Ref": "LayersErcotReportsPolicy"
+                    "Ref": "InvexCapitalLambdaSendEmailMailboxPolicy"
                   }
                 ]
               }
             },
-            "S3ErcotReportsPolicy": {
+            "InvexCapitalLambdaSendEmailMailboxPolicy": {
               "Type": "AWS::IAM::ManagedPolicy",
               "Properties": {
-                "ManagedPolicyName": "S3ErcotReportsPolicy",
-                "Description": "Lambda policy to allow access to s3 api info",
+                "ManagedPolicyName": "InvexCapitalLambdaSendEmailMailboxPolicy",
+                "Description": "Allow Lambda to send emails via SES",
                 "Path": "/",
                 "PolicyDocument": {
                   "Version": "2012-10-17",
@@ -62,35 +57,10 @@
                     {
                       "Effect": "Allow",
                       "Action": [
-                        "s3:GetObject"
+                        "ses:SendEmail",
+                        "ses:SendRawEmail"
                       ],
-                      "Resource": [
-                        "arn:aws:s3:::medidores-ercot-dev",
-                        "arn:aws:s3:::medidores-ercot-dev/*"
-                      ]
-                    }
-                  ]
-                }
-              }
-            },
-            "SecretsErcotReportsPolicy": "<REDACTED>",
-            "LayersErcotReportsPolicy": {
-              "Type": "AWS::IAM::ManagedPolicy",
-              "Properties": {
-                "ManagedPolicyName": "LayersErcotReportsPolicy",
-                "Description": "Lambda policy to allow access to secrets manager apan model",
-                "Path": "/",
-                "PolicyDocument": {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Action": [
-                        "lambda:GetLayerVersion"
-                      ],
-                      "Resource": [
-                        "*"
-                      ]
+                      "Resource": "*"
                     }
                   ]
                 }
@@ -99,34 +69,35 @@
           },
           "Outputs": {
             "ServerlessDeploymentBucketName": {
-              "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "Value": "serverless-framework-deployments-us-east-1-a6b6d25c-d242",
               "Export": {
-                "Name": "sls-imove-reportes-ercot-role-dev-ServerlessDeploymentBucketName"
+                "Name": "sls-mflores-invexcapital-send-support-mailbox-role-prod-ServerlessDeploymentBucketName"
               }
             }
           }
         }
       },
       "custom": {
-        "stage": "dev",
+        "stage": "prod",
         "my-region": "us-east-1",
         "config": {
           "prod": {
-            "account_id": "857285351963"
+            "account_id": "871467914043"
           },
           "dev": {
-            "account_id": "857285351963"
+            "account_id": "871467914043"
           }
         }
       },
       "resources": {
         "Resources": {
-          "ReportesErcotRole": {
+          "InvexCapitalLambdaSendEmailMailboxRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-              "RoleName": "ReportesErcotRole",
+              "RoleName": "InvexCapitalLambdaSendEmailMailboxRole",
               "MaxSessionDuration": 3600,
               "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
                 "Statement": [
                   {
                     "Effect": "Allow",
@@ -142,22 +113,16 @@
               "ManagedPolicyArns": [
                 "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
                 {
-                  "Ref": "S3ErcotReportsPolicy"
-                },
-                {
-                  "Ref": "SecretsErcotReportsPolicy"
-                },
-                {
-                  "Ref": "LayersErcotReportsPolicy"
+                  "Ref": "InvexCapitalLambdaSendEmailMailboxPolicy"
                 }
               ]
             }
           },
-          "S3ErcotReportsPolicy": {
+          "InvexCapitalLambdaSendEmailMailboxPolicy": {
             "Type": "AWS::IAM::ManagedPolicy",
             "Properties": {
-              "ManagedPolicyName": "S3ErcotReportsPolicy",
-              "Description": "Lambda policy to allow access to s3 api info",
+              "ManagedPolicyName": "InvexCapitalLambdaSendEmailMailboxPolicy",
+              "Description": "Allow Lambda to send emails via SES",
               "Path": "/",
               "PolicyDocument": {
                 "Version": "2012-10-17",
@@ -165,35 +130,10 @@
                   {
                     "Effect": "Allow",
                     "Action": [
-                      "s3:GetObject"
+                      "ses:SendEmail",
+                      "ses:SendRawEmail"
                     ],
-                    "Resource": [
-                      "arn:aws:s3:::medidores-ercot-dev",
-                      "arn:aws:s3:::medidores-ercot-dev/*"
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          "SecretsErcotReportsPolicy": "<REDACTED>",
-          "LayersErcotReportsPolicy": {
-            "Type": "AWS::IAM::ManagedPolicy",
-            "Properties": {
-              "ManagedPolicyName": "LayersErcotReportsPolicy",
-              "Description": "Lambda policy to allow access to secrets manager apan model",
-              "Path": "/",
-              "PolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                  {
-                    "Effect": "Allow",
-                    "Action": [
-                      "lambda:GetLayerVersion"
-                    ],
-                    "Resource": [
-                      "*"
-                    ]
+                    "Resource": "*"
                   }
                 ]
               }
@@ -206,7 +146,7 @@
     "provider": {
       "name": "aws",
       "runtime": "python3.12",
-      "stage": "dev",
+      "stage": "prod",
       "region": "us-east-1",
       "environment": {
         "REGION": "us-east-1"
@@ -216,12 +156,13 @@
         "AWSTemplateFormatVersion": "2010-09-09",
         "Description": "The AWS CloudFormation template for this Serverless application",
         "Resources": {
-          "ReportesErcotRole": {
+          "InvexCapitalLambdaSendEmailMailboxRole": {
             "Type": "AWS::IAM::Role",
             "Properties": {
-              "RoleName": "ReportesErcotRole",
+              "RoleName": "InvexCapitalLambdaSendEmailMailboxRole",
               "MaxSessionDuration": 3600,
               "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
                 "Statement": [
                   {
                     "Effect": "Allow",
@@ -237,22 +178,16 @@
               "ManagedPolicyArns": [
                 "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
                 {
-                  "Ref": "S3ErcotReportsPolicy"
-                },
-                {
-                  "Ref": "SecretsErcotReportsPolicy"
-                },
-                {
-                  "Ref": "LayersErcotReportsPolicy"
+                  "Ref": "InvexCapitalLambdaSendEmailMailboxPolicy"
                 }
               ]
             }
           },
-          "S3ErcotReportsPolicy": {
+          "InvexCapitalLambdaSendEmailMailboxPolicy": {
             "Type": "AWS::IAM::ManagedPolicy",
             "Properties": {
-              "ManagedPolicyName": "S3ErcotReportsPolicy",
-              "Description": "Lambda policy to allow access to s3 api info",
+              "ManagedPolicyName": "InvexCapitalLambdaSendEmailMailboxPolicy",
+              "Description": "Allow Lambda to send emails via SES",
               "Path": "/",
               "PolicyDocument": {
                 "Version": "2012-10-17",
@@ -260,35 +195,10 @@
                   {
                     "Effect": "Allow",
                     "Action": [
-                      "s3:GetObject"
+                      "ses:SendEmail",
+                      "ses:SendRawEmail"
                     ],
-                    "Resource": [
-                      "arn:aws:s3:::medidores-ercot-dev",
-                      "arn:aws:s3:::medidores-ercot-dev/*"
-                    ]
-                  }
-                ]
-              }
-            }
-          },
-          "SecretsErcotReportsPolicy": "<REDACTED>",
-          "LayersErcotReportsPolicy": {
-            "Type": "AWS::IAM::ManagedPolicy",
-            "Properties": {
-              "ManagedPolicyName": "LayersErcotReportsPolicy",
-              "Description": "Lambda policy to allow access to secrets manager apan model",
-              "Path": "/",
-              "PolicyDocument": {
-                "Version": "2012-10-17",
-                "Statement": [
-                  {
-                    "Effect": "Allow",
-                    "Action": [
-                      "lambda:GetLayerVersion"
-                    ],
-                    "Resource": [
-                      "*"
-                    ]
+                    "Resource": "*"
                   }
                 ]
               }
@@ -297,9 +207,9 @@
         },
         "Outputs": {
           "ServerlessDeploymentBucketName": {
-            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Value": "serverless-framework-deployments-us-east-1-a6b6d25c-d242",
             "Export": {
-              "Name": "sls-imove-reportes-ercot-role-dev-ServerlessDeploymentBucketName"
+              "Name": "sls-mflores-invexcapital-send-support-mailbox-role-prod-ServerlessDeploymentBucketName"
             }
           }
         }
@@ -314,40 +224,41 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
-    "serviceRawFile": "service: imove-reportes-ercot-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    prod:\n      account_id: '857285351963'\n    dev:\n      account_id: '857285351963'\n\n\nresources:\n- ${file(roles.yml)}\n- ${file(policies.yml)}",
+    "serviceRawFile": "service: mflores-invexcapital-send-support-mailbox-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    prod:\n      account_id: '871467914043'\n    dev:\n      account_id: '871467914043'\n\nresources:\n- ${file(roles.yml)}\n- ${file(policies.yml)}",
     "command": [
       "deploy"
     ],
     "options": {
-      "stage": "dev"
+      "stage": "prod"
     },
-    "orgId": "7c70b296-42db-4546-9ab4-cfa902b15624",
-    "orgName": "ammperivan",
-    "userId": "0ZDMGhBhqR8Z3R2X9V",
-    "userName": "ammperivan",
-    "serviceProviderAwsAccountId": "857285351963",
-    "serviceProviderAwsCfStackName": "imove-reportes-ercot-role-dev",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:857285351963:stack/imove-reportes-ercot-role-dev/78351c30-ba72-11f0-9129-0eb3ddb16825",
-    "serviceProviderAwsCfStackCreated": "2025-11-05T18:08:45.541Z",
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "871467914043",
+    "serviceProviderAwsCfStackName": "mflores-invexcapital-send-support-mailbox-role-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:871467914043:stack/mflores-invexcapital-send-support-mailbox-role-prod/dfbd8f00-e528-11f0-b42c-1290fa05731f",
+    "serviceProviderAwsCfStackCreated": "2025-12-30T02:40:16.508Z",
     "serviceProviderAwsCfStackUpdated": null,
     "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
     "serviceProviderAwsCfStackOutputs": [
       {
         "OutputKey": "ServerlessDeploymentBucketName",
-        "OutputValue": "serverless-framework-deployments-us-east-1-5804d545-76c0",
-        "ExportName": "sls-imove-reportes-ercot-role-dev-ServerlessDeploymentBucketName"
+        "OutputValue": "serverless-framework-deployments-us-east-1-a6b6d25c-d242",
+        "ExportName": "sls-mflores-invexcapital-send-support-mailbox-role-prod-ServerlessDeploymentBucketName"
       }
     ],
     "compiledCloudFormationTemplate": {
       "AWSTemplateFormatVersion": "2010-09-09",
       "Description": "The AWS CloudFormation template for this Serverless application",
       "Resources": {
-        "ReportesErcotRole": {
+        "InvexCapitalLambdaSendEmailMailboxRole": {
           "Type": "AWS::IAM::Role",
           "Properties": {
-            "RoleName": "ReportesErcotRole",
+            "RoleName": "InvexCapitalLambdaSendEmailMailboxRole",
             "MaxSessionDuration": 3600,
             "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
               "Statement": [
                 {
                   "Effect": "Allow",
@@ -363,22 +274,16 @@
             "ManagedPolicyArns": [
               "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
               {
-                "Ref": "S3ErcotReportsPolicy"
-              },
-              {
-                "Ref": "SecretsErcotReportsPolicy"
-              },
-              {
-                "Ref": "LayersErcotReportsPolicy"
+                "Ref": "InvexCapitalLambdaSendEmailMailboxPolicy"
               }
             ]
           }
         },
-        "S3ErcotReportsPolicy": {
+        "InvexCapitalLambdaSendEmailMailboxPolicy": {
           "Type": "AWS::IAM::ManagedPolicy",
           "Properties": {
-            "ManagedPolicyName": "S3ErcotReportsPolicy",
-            "Description": "Lambda policy to allow access to s3 api info",
+            "ManagedPolicyName": "InvexCapitalLambdaSendEmailMailboxPolicy",
+            "Description": "Allow Lambda to send emails via SES",
             "Path": "/",
             "PolicyDocument": {
               "Version": "2012-10-17",
@@ -386,35 +291,10 @@
                 {
                   "Effect": "Allow",
                   "Action": [
-                    "s3:GetObject"
+                    "ses:SendEmail",
+                    "ses:SendRawEmail"
                   ],
-                  "Resource": [
-                    "arn:aws:s3:::medidores-ercot-dev",
-                    "arn:aws:s3:::medidores-ercot-dev/*"
-                  ]
-                }
-              ]
-            }
-          }
-        },
-        "SecretsErcotReportsPolicy": "<REDACTED>",
-        "LayersErcotReportsPolicy": {
-          "Type": "AWS::IAM::ManagedPolicy",
-          "Properties": {
-            "ManagedPolicyName": "LayersErcotReportsPolicy",
-            "Description": "Lambda policy to allow access to secrets manager apan model",
-            "Path": "/",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "lambda:GetLayerVersion"
-                  ],
-                  "Resource": [
-                    "*"
-                  ]
+                  "Resource": "*"
                 }
               ]
             }
@@ -423,9 +303,9 @@
       },
       "Outputs": {
         "ServerlessDeploymentBucketName": {
-          "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "Value": "serverless-framework-deployments-us-east-1-a6b6d25c-d242",
           "Export": {
-            "Name": "sls-imove-reportes-ercot-role-dev-ServerlessDeploymentBucketName"
+            "Name": "sls-mflores-invexcapital-send-support-mailbox-role-prod-ServerlessDeploymentBucketName"
           }
         }
       }

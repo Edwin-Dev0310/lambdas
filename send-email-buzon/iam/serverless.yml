@@ -1,4 +1,4 @@
-service: imove-reportes-ercot-role
+service: mflores-invexcapital-send-support-mailbox-role
 
 provider:
   name: aws
@@ -13,10 +13,9 @@ custom:
   my-region: ${opt:region, 'us-east-1'}
   config:
     prod:
-      account_id: '857285351963'
+      account_id: '871467914043'
     dev:
-      account_id: '857285351963'
-
+      account_id: '871467914043'
 
 resources:
 - ${file(roles.yml)}
