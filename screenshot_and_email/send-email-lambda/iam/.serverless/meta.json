@@ -1,0 +1,315 @@
+{
+  "/Users/migueledwinflores/Proyects/Lambdas/screenshot_and_email/send-email-lambda/iam/serverless.yml": {
+    "versionFramework": "4.31.0",
+    "servicePath": "/Users/migueledwinflores/Proyects/Lambdas/screenshot_and_email/send-email-lambda/iam/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "mflores-minador-screenshot-role",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.12",
+        "stage": "prod",
+        "region": "us-east-1",
+        "environment": {
+          "REGION": "us-east-1"
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "MinadorLambdaSendEmailRole": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "RoleName": "MinadorLambdaSendEmailRole",
+                "MaxSessionDuration": 3600,
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": "lambda.amazonaws.com"
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "ManagedPolicyArns": [
+                  "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                  {
+                    "Ref": "MinadorLambdaSendEmailPolicy"
+                  }
+                ]
+              }
+            },
+            "MinadorLambdaSendEmailPolicy": {
+              "Type": "AWS::IAM::ManagedPolicy",
+              "Properties": {
+                "ManagedPolicyName": "MinadorLambdaSendEmailPolicy",
+                "Description": "Allow Lambda to send emails via SES",
+                "Path": "/",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ses:SendEmail",
+                        "ses:SendRawEmail"
+                      ],
+                      "Resource": "*"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+              "Export": {
+                "Name": "sls-mflores-minador-screenshot-role-prod-ServerlessDeploymentBucketName"
+              }
+            }
+          }
+        }
+      },
+      "custom": {
+        "stage": "prod",
+        "my-region": "us-east-1",
+        "config": {
+          "prod": {
+            "account_id": "886815432397"
+          },
+          "dev": {
+            "account_id": "886815432397"
+          }
+        }
+      },
+      "resources": {
+        "Resources": {
+          "MinadorLambdaSendEmailRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "MinadorLambdaSendEmailRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "MinadorLambdaSendEmailPolicy"
+                }
+              ]
+            }
+          },
+          "MinadorLambdaSendEmailPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "MinadorLambdaSendEmailPolicy",
+              "Description": "Allow Lambda to send emails via SES",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "ses:SendEmail",
+                      "ses:SendRawEmail"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {}
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "MinadorLambdaSendEmailRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "MinadorLambdaSendEmailRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "MinadorLambdaSendEmailPolicy"
+                }
+              ]
+            }
+          },
+          "MinadorLambdaSendEmailPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "MinadorLambdaSendEmailPolicy",
+              "Description": "Allow Lambda to send emails via SES",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "ses:SendEmail",
+                      "ses:SendRawEmail"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+            "Export": {
+              "Name": "sls-mflores-minador-screenshot-role-prod-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: mflores-minador-screenshot-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    prod:\n      account_id: '886815432397'\n    dev:\n      account_id: '886815432397'\n\nresources:\n- ${file(roles.yml)}\n- ${file(policies.yml)}",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "prod",
+      "debug": "*"
+    },
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "886815432397",
+    "serviceProviderAwsCfStackName": "mflores-minador-screenshot-role-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:886815432397:stack/mflores-minador-screenshot-role-prod/2c14c1a0-f65b-11f0-b8bc-0e8f122c069f",
+    "serviceProviderAwsCfStackCreated": "2026-01-20T23:53:09.167Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+        "ExportName": "sls-mflores-minador-screenshot-role-prod-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "MinadorLambdaSendEmailRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "MinadorLambdaSendEmailRole",
+            "MaxSessionDuration": 3600,
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              {
+                "Ref": "MinadorLambdaSendEmailPolicy"
+              }
+            ]
+          }
+        },
+        "MinadorLambdaSendEmailPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "ManagedPolicyName": "MinadorLambdaSendEmailPolicy",
+            "Description": "Allow Lambda to send emails via SES",
+            "Path": "/",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ses:SendEmail",
+                    "ses:SendRawEmail"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+          "Export": {
+            "Name": "sls-mflores-minador-screenshot-role-prod-ServerlessDeploymentBucketName"
+          }
+        }
+      }
+    }
+  }
+}

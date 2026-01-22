@@ -1,0 +1,226 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "SendEmailLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/mflores-minador-send-email-functions-prod-sendEmail"
+      }
+    },
+    "SendEmailLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+          "S3Key": "serverless/mflores-minador-send-email-functions/prod/1769023950254-2026-01-21T19:32:30.254Z/mflores-minador-send-email-functions.zip"
+        },
+        "Handler": "handler.send_email",
+        "Runtime": "python3.14",
+        "FunctionName": "mflores-minador-send-email-functions-prod-sendEmail",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Tags": [
+          {
+            "Key": "dev",
+            "Value": "mflores"
+          },
+          {
+            "Key": "project-name",
+            "Value": "minador-send-email-screenshot"
+          },
+          {
+            "Key": "env",
+            "Value": "prod"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "REGION": "us-east-1",
+            "STAGE": "prod",
+            "EMAIL_SUBJECT": "Alerta de Minador",
+            "SENDER_EMAIL": "vrico@ammper.com"
+          }
+        },
+        "Role": "arn:aws:iam::886815432397:role/MinadorLambdaSendEmailRole"
+      },
+      "DependsOn": [
+        "SendEmailLogGroup"
+      ]
+    },
+    "SendEmailLambdaVersionewmQL6khhEe2HJuLSS7Sd2C4ynC7hcXWJZ3pmP80uQ": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SendEmailLambdaFunction"
+        },
+        "CodeSha256": "Fbz81WnUH8/W+5pbuOU91mUbU0qExSfmQbl8ePP32E0="
+      }
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "prod-mflores-minador-send-email-functions",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Content-Type",
+            "X-Amz-Date",
+            "Authorization",
+            "X-Api-Key",
+            "X-Amz-Security-Token",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id"
+          ],
+          "AllowMethods": [
+            "OPTIONS",
+            "POST"
+          ],
+          "AllowOrigins": [
+            "*"
+          ]
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        }
+      }
+    },
+    "SendEmailLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SendEmailLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSendEmail": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SendEmailLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostMinadorDashsendDashemail": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /minador-send-email",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSendEmail"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSendEmail"
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-a0e859bd-8088",
+      "Export": {
+        "Name": "sls-mflores-minador-send-email-functions-prod-ServerlessDeploymentBucketName"
+      }
+    },
+    "SendEmailLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SendEmailLambdaVersionewmQL6khhEe2HJuLSS7Sd2C4ynC7hcXWJZ3pmP80uQ"
+      },
+      "Export": {
+        "Name": "sls-mflores-minador-send-email-functions-prod-SendEmailLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-mflores-minador-send-email-functions-prod-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-mflores-minador-send-email-functions-prod-HttpApiUrl"
+      }
+    }
+  }
+}
