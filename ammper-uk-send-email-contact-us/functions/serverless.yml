@@ -10,7 +10,7 @@ provider:
   environment:
     REGION: ${self:provider.region}
     STAGE: ${self:custom.stage}
-    SENDER_EMAIL: mflores@ammper.com #info@ammper.co.uk
+    SENDER_EMAIL: info@ammper.co.uk
     
 custom:
   stage: ${opt:stage, 'dev'}

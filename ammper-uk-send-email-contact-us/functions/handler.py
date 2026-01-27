@@ -4,7 +4,7 @@ import json
 data = [
     { "value": "Home", "template":"home" }
 ]
-SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'mflores@ammper.com')
+SENDER_EMAIL = os.environ.get('SENDER_EMAIL', 'info@ammper.co.uk')
 
 def get_template_by_value(value_to_find, data, default_template="default"):
     for item in data:
@@ -48,7 +48,7 @@ def ses_send_notification(recipient_email, body):
     flag=""
     html_content = html_template.replace('{{name}}', flag)
 
-    # ses_email_from = 'mflores@ammper.com'
+    # ses_email_from = 'info@ammper.co.uk'
     # ses_email_from = SENDER_EMAIL
     ses_client = boto3.client('ses')
 
