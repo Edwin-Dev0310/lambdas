@@ -1,0 +1,62 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "AmmperUKLambdaSendEmailContactUsRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "AmmperUKLambdaSendEmailContactUsRole",
+        "MaxSessionDuration": 3600,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          {
+            "Ref": "AmmperUKLambdaSendEmailContactUsPolicy"
+          }
+        ]
+      }
+    },
+    "AmmperUKLambdaSendEmailContactUsPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "AmmperUKLambdaSendEmailContactUsPolicy",
+        "Description": "Allow Lambda to send emails via SES",
+        "Path": "/",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "ses:SendEmail",
+                "ses:SendRawEmail"
+              ],
+              "Resource": "*"
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-d7a41bd5-93d4",
+      "Export": {
+        "Name": "sls-mflores-ammper-uk-send-email-role-prod-ServerlessDeploymentBucketName"
+      }
+    }
+  }
+}

@@ -1,0 +1,49 @@
+service: mflores-send-email-contact-us-functions
+
+provider:
+  name: aws
+  runtime: python3.14
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  httpApi: # Configuración del HTTP API
+    cors: true
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    SENDER_EMAIL: mflores@ammper.com #info@ammper.co.uk
+    
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "124355651471"
+      memory_size: 1024
+    prd:
+      my-region: us-east-1
+      account_id: "124355651471"
+      memory_size: 1024
+  pythonRequirements:
+    useDownloadCache: true
+    useStaticCache: true
+    cacheLocation: "../cache_python_requirements_plugin"
+    staticCacheMaxVersions: 5
+    fileName: requirements.txt
+
+functions:
+  sendEmail:
+    handler: handler.send_email
+    role: arn:aws:iam::${self:custom.config.dev.account_id}:role/AmmperUKLambdaSendEmailContactUsRole
+    tags:
+      dev: mflores
+      project-name: ammper-uk-landing
+      env: ${self:custom.stage}
+    events:
+      - httpApi:
+          path: /send-email-contact-us
+          method: POST
+    
+package:
+  include:
+    - templates/**
