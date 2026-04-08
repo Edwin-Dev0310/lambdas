@@ -1,0 +1,27 @@
+Resources:
+  ScraperHydraulicsPdfPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: ScraperHydraulicsPdfPolicy
+      Description: Allow Lambda to scrape a webpage, download PDFs and upload them to S3
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          # Permisos S3 sobre objetos (subir, descargar PDFs)
+          - Sid: AllowS3ObjectOperations
+            Effect: Allow
+            Action:
+              - s3:PutObject
+              - s3:GetObject
+            Resource:
+              - arn:aws:s3:::sim-market-data/evolucion-hidraulica-presas/*
+
+          # Permisos S3 sobre el bucket (listar objetos)
+          - Sid: AllowS3BucketList
+            Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - arn:aws:s3:::sim-market-data
+

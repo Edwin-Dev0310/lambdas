@@ -1,0 +1,65 @@
+service: mflores-scraper-hydraulics-pdf-functions
+
+provider:
+  name: aws
+  ecr:
+    images:
+      scraperimg:
+        path: ./
+        buildArgs:
+          PROVENANCE: false
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    # Bucket S3 donde se guardan los PDFs
+    S3_BUCKET_NAME: "sim-market-data"
+    S3_PREFIX: "evolucion-hidraulica-presas"
+    # Entorno Dockerificado: Rutas directas instaladas
+    
+
+    # IDs de los elementos del formulario de la página
+    SELECT_ELEMENT_ANIO_ID: "ContentPlaceHolder1_DrpAnio"
+    SELECT_ELEMENT_RECURSO_ID: "ContentPlaceHolder1_drpPresas"
+    PAGE_LOAD_TIMEOUT: "30"
+    ELEMENT_WAIT: "15"
+    
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "587992493393"
+      memory_size: 1024
+    prod:
+      my-region: us-east-1
+      account_id: "587992493393"
+      memory_size: 1024
+
+package:
+  patterns:
+    - "!venv/**"
+    - "!.venv/**"
+    - "!descargas_locales/**"
+    - "!.wdm/**"
+    - "!test_local.py"
+    - "!__pycache__/**"
+    - "!.serverless/**"
+    - "!node_modules/**"
+
+functions:
+  scraperHydraulics:
+    image:
+      name: scraperimg
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/ScraperHydraulicsPdfRole
+    timeout: 300        # 5 minutos máximo
+    memorySize: 2048    # 2 GB
+    tags:
+      dev: mflores
+      project-name: scraper-hydraulics-pdf
+      env: ${self:custom.stage}
+    events:
+      # Ejecución programada todos los días a las 10:00 AM hora CST (16:00 UTC)
+      - schedule: cron(0 16 * * ? *)

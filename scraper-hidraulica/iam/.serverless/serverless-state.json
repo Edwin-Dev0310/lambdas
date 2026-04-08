@@ -1,0 +1,194 @@
+{
+  "service": {
+    "service": "mflores-scraper-hydraulics-pdf-role",
+    "serviceObject": {
+      "name": "mflores-scraper-hydraulics-pdf-role"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ScraperHydraulicsPdfRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "ScraperHydraulicsPdfRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "ScraperHydraulicsPdfPolicy"
+                }
+              ]
+            }
+          },
+          "ScraperHydraulicsPdfPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "ScraperHydraulicsPdfPolicy",
+              "Description": "Allow Lambda to scrape a webpage, download PDFs and upload them to S3",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Sid": "AllowS3ObjectOperations",
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:PutObject",
+                      "s3:GetObject"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::sim-market-data/evolucion-hidraulica-presas/*"
+                    ]
+                  },
+                  {
+                    "Sid": "AllowS3BucketList",
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:ListBucket"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::sim-market-data"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+            "Export": {
+              "Name": "sls-mflores-scraper-hydraulics-pdf-role-prod-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
+    },
+    "custom": {
+      "stage": "prod",
+      "my-region": "us-east-1",
+      "config": {
+        "prod": {
+          "account_id": "587992493393"
+        },
+        "dev": {
+          "account_id": "587992493393"
+        }
+      }
+    },
+    "pluginsData": {},
+    "functions": {},
+    "resources": {
+      "Resources": {
+        "ScraperHydraulicsPdfRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "ScraperHydraulicsPdfRole",
+            "MaxSessionDuration": 3600,
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              {
+                "Ref": "ScraperHydraulicsPdfPolicy"
+              }
+            ]
+          }
+        },
+        "ScraperHydraulicsPdfPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "ManagedPolicyName": "ScraperHydraulicsPdfPolicy",
+            "Description": "Allow Lambda to scrape a webpage, download PDFs and upload them to S3",
+            "Path": "/",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Sid": "AllowS3ObjectOperations",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:GetObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::sim-market-data/evolucion-hidraulica-presas/*"
+                  ]
+                },
+                {
+                  "Sid": "AllowS3BucketList",
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::sim-market-data"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless",
+    "initialServerlessConfig": {
+      "service": "mflores-scraper-hydraulics-pdf-role",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
+      }
+    },
+    "appId": null,
+    "orgId": null,
+    "layers": {}
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mflores-scraper-hydraulics-pdf-role/prod/1775611780247-2026-04-08T01:29:40.247Z",
+    "artifact": ""
+  }
+}

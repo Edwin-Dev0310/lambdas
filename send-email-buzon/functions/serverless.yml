@@ -2,7 +2,7 @@ service: mflores-send-support-mailbox-functions
 
 provider:
   name: aws
-  runtime: python3.14
+  runtime: python3.
   stage: ${self:custom.stage}
   region: ${self:custom.my-region}
   httpApi: # Configuración del HTTP API

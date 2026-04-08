@@ -1,0 +1,75 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "ScraperHydraulicsPdfRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "ScraperHydraulicsPdfRole",
+        "MaxSessionDuration": 3600,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          {
+            "Ref": "ScraperHydraulicsPdfPolicy"
+          }
+        ]
+      }
+    },
+    "ScraperHydraulicsPdfPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "ScraperHydraulicsPdfPolicy",
+        "Description": "Allow Lambda to scrape a webpage, download PDFs and upload them to S3",
+        "Path": "/",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Sid": "AllowS3ObjectOperations",
+              "Effect": "Allow",
+              "Action": [
+                "s3:PutObject",
+                "s3:GetObject"
+              ],
+              "Resource": [
+                "arn:aws:s3:::sim-market-data/evolucion-hidraulica-presas/*"
+              ]
+            },
+            {
+              "Sid": "AllowS3BucketList",
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket"
+              ],
+              "Resource": [
+                "arn:aws:s3:::sim-market-data"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+      "Export": {
+        "Name": "sls-mflores-scraper-hydraulics-pdf-role-prod-ServerlessDeploymentBucketName"
+      }
+    }
+  }
+}

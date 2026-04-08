@@ -1,0 +1,231 @@
+{
+  "service": {
+    "service": "mflores-scraper-hydraulics-pdf-functions",
+    "serviceObject": {
+      "name": "mflores-scraper-hydraulics-pdf-functions"
+    },
+    "provider": {
+      "name": "aws",
+      "ecr": {
+        "images": {
+          "scraperimg": {
+            "path": "./",
+            "buildArgs": {
+              "PROVENANCE": "false"
+            }
+          }
+        }
+      },
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1",
+        "STAGE": "prod",
+        "S3_BUCKET_NAME": "sim-market-data",
+        "S3_PREFIX": "evolucion-hidraulica-presas",
+        "SELECT_ELEMENT_ANIO_ID": "ContentPlaceHolder1_DrpAnio",
+        "SELECT_ELEMENT_RECURSO_ID": "ContentPlaceHolder1_drpPresas",
+        "PAGE_LOAD_TIMEOUT": "30",
+        "ELEMENT_WAIT": "15"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "ScraperHydraulicsLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mflores-scraper-hydraulics-pdf-functions-prod-scraperHydraulics"
+            }
+          },
+          "ScraperHydraulicsLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "ImageUri": "587992493393.dkr.ecr.us-east-1.amazonaws.com/serverless-mflores-scraper-hydraulics-pdf-functions-prod@sha256:4dc78942f3575137fea00d6d9bd516c2d59b7c3fb1bcff3e3d88b8f61c7dcb6d"
+              },
+              "PackageType": "Image",
+              "FunctionName": "mflores-scraper-hydraulics-pdf-functions-prod-scraperHydraulics",
+              "MemorySize": 2048,
+              "Timeout": 300,
+              "Tags": [
+                {
+                  "Key": "dev",
+                  "Value": "mflores"
+                },
+                {
+                  "Key": "project-name",
+                  "Value": "scraper-hydraulics-pdf"
+                },
+                {
+                  "Key": "env",
+                  "Value": "prod"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1",
+                  "STAGE": "prod",
+                  "S3_BUCKET_NAME": "sim-market-data",
+                  "S3_PREFIX": "evolucion-hidraulica-presas",
+                  "SELECT_ELEMENT_ANIO_ID": "ContentPlaceHolder1_DrpAnio",
+                  "SELECT_ELEMENT_RECURSO_ID": "ContentPlaceHolder1_drpPresas",
+                  "PAGE_LOAD_TIMEOUT": "30",
+                  "ELEMENT_WAIT": "15"
+                }
+              },
+              "Role": "arn:aws:iam::587992493393:role/ScraperHydraulicsPdfRole"
+            },
+            "DependsOn": [
+              "ScraperHydraulicsLogGroup"
+            ]
+          },
+          "ScraperHydraulicsLambdaVersion2eB5VZVk59cyiealRULAgg0lxqquayvBxy4ptYZtK4": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "ScraperHydraulicsLambdaFunction"
+              },
+              "CodeSha256": "4dc78942f3575137fea00d6d9bd516c2d59b7c3fb1bcff3e3d88b8f61c7dcb6d"
+            }
+          },
+          "ScraperHydraulicsEventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "cron(0 16 * * ? *)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "ScraperHydraulicsLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "scraperHydraulicsSchedule"
+                }
+              ]
+            }
+          },
+          "ScraperHydraulicsLambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "ScraperHydraulicsLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "ScraperHydraulicsEventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+            "Export": {
+              "Name": "sls-mflores-scraper-hydraulics-pdf-functions-prod-ServerlessDeploymentBucketName"
+            }
+          },
+          "ScraperHydraulicsLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "ScraperHydraulicsLambdaVersion2eB5VZVk59cyiealRULAgg0lxqquayvBxy4ptYZtK4"
+            },
+            "Export": {
+              "Name": "sls-mflores-scraper-hydraulics-pdf-functions-prod-ScraperHydraulicsLambdaFunctionQualifiedArn"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "stage": "prod",
+      "my-region": "us-east-1",
+      "config": {
+        "dev": {
+          "my-region": "us-east-1",
+          "account_id": "587992493393",
+          "memory_size": 1024
+        },
+        "prod": {
+          "my-region": "us-east-1",
+          "account_id": "587992493393",
+          "memory_size": 1024
+        }
+      }
+    },
+    "pluginsData": {},
+    "functions": {
+      "scraperHydraulics": {
+        "image": {
+          "name": "scraperimg"
+        },
+        "role": "arn:aws:iam::587992493393:role/ScraperHydraulicsPdfRole",
+        "timeout": 300,
+        "memorySize": 2048,
+        "tags": {
+          "dev": "mflores",
+          "project-name": "scraper-hydraulics-pdf",
+          "env": "prod"
+        },
+        "events": [
+          {
+            "schedule": "cron(0 16 * * ? *)"
+          }
+        ],
+        "name": "mflores-scraper-hydraulics-pdf-functions-prod-scraperHydraulics",
+        "package": {},
+        "memory": 2048,
+        "vpc": {},
+        "versionLogicalId": "ScraperHydraulicsLambdaVersion2eB5VZVk59cyiealRULAgg0lxqquayvBxy4ptYZtK4"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless",
+    "initialServerlessConfig": {
+      "service": "mflores-scraper-hydraulics-pdf-functions",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
+      "package": {
+        "patterns": [
+          "!venv/**",
+          "!.venv/**",
+          "!descargas_locales/**",
+          "!.wdm/**",
+          "!test_local.py",
+          "!__pycache__/**",
+          "!.serverless/**",
+          "!node_modules/**"
+        ],
+        "artifactsS3KeyDirname": "serverless/mflores-scraper-hydraulics-pdf-functions/prod/code-artifacts",
+        "deploymentBucket": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+        "artifactDirectoryName": "serverless/mflores-scraper-hydraulics-pdf-functions/prod/1775666661963-2026-04-08T16:44:21.963Z"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      }
+    },
+    "appId": null,
+    "orgId": null,
+    "layers": {}
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mflores-scraper-hydraulics-pdf-functions/prod/1775666661963-2026-04-08T16:44:21.963Z",
+    "artifact": ""
+  }
+}
