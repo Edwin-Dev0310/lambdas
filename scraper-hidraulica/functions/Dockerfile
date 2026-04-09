@@ -1,15 +1,15 @@
-FROM public.ecr.aws/lambda/python:3.11
+FROM --platform=linux/amd64 public.ecr.aws/lambda/python:3.11
 
-# Instalar dependencias del sistema necesarias para Chromium
+# ── Dependencias del sistema necesarias para Chrome headless ─────────────────
 RUN yum install -y \
     unzip \
     wget \
     curl \
+    ca-certificates \
     atk \
     cups-libs \
     gtk3 \
     libXcomposite \
-    alsa-lib \
     libXcursor \
     libXdamage \
     libXext \
@@ -18,35 +18,41 @@ RUN yum install -y \
     libXScrnSaver \
     libXtst \
     pango \
-    xorg-x11-fonts-Type1 \
-    xorg-x11-fonts-misc \
+    alsa-lib \
     libX11 \
-    nss \
-    mesa-libgbm \
+    libX11-xcb \
+    libxcb \
+    xorg-x11-server-Xvfb \
     && yum clean all
 
-# Instalar Chromium
-RUN curl -Lo /tmp/chromium.zip https://github.com/adieuadieu/serverless-chrome/releases/download/v1.0.0-55/stable-headless-chromium-amazonlinux-2017-03.zip \
-    && unzip /tmp/chromium.zip -d /opt/ \
-    && rm /tmp/chromium.zip \
-    && chmod +x /opt/headless-chromium
+# ── Chrome y ChromeDriver (Chrome for Testing — versiones sincronizadas) ──────
+# NOTA: Se usa Chrome for Testing en vez del RPM de Google Chrome porque la
+# API antigua (chromedriver.storage.googleapis.com) fue deprecada en 2024.
+# Ambos binarios provienen de la misma fuente → versión garantizada compatible.
+ARG CHROME_VERSION=131.0.6778.204
 
-# Instalar ChromeDriver compatible
-RUN curl -Lo /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/2.46/chromedriver_linux64.zip \
-    && unzip /tmp/chromedriver.zip -d /opt/ \
-    && rm /tmp/chromedriver.zip \
-    && chmod +x /opt/chromedriver
+RUN wget -q -O /tmp/chrome-linux64.zip \
+        "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chrome-linux64.zip" \
+    && unzip -q /tmp/chrome-linux64.zip -d /opt/ \
+    && ln -sf /opt/chrome-linux64/chrome /usr/bin/google-chrome \
+    && chmod +x /opt/chrome-linux64/chrome \
+    && rm /tmp/chrome-linux64.zip
 
-# Variables de entorno
-ENV CHROME_BIN=/opt/headless-chromium
-ENV CHROMEDRIVER_PATH=/opt/chromedriver
+RUN wget -q -O /tmp/chromedriver-linux64.zip \
+        "https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/chromedriver-linux64.zip" \
+    && unzip -q /tmp/chromedriver-linux64.zip -d /tmp/ \
+    && mv /tmp/chromedriver-linux64/chromedriver /usr/bin/chromedriver \
+    && chmod +x /usr/bin/chromedriver \
+    && rm -rf /tmp/chromedriver-linux64.zip /tmp/chromedriver-linux64
 
-# Copiar dependencias Python
+# ── Dependencias Python ───────────────────────────────────────────────────────
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt
 
-# Copiar todos los archivos incluyendo subdirectorios al task root
-COPY . ${LAMBDA_TASK_ROOT}
+# ── Código de la aplicación ───────────────────────────────────────────────────
+COPY scraper_handler.py ${LAMBDA_TASK_ROOT}
+COPY selenium_driver/ ${LAMBDA_TASK_ROOT}/selenium_driver/
 
-# Comando Lambda
+# ── Handler ───────────────────────────────────────────────────────────────────
 CMD ["scraper_handler.run_scraper"]

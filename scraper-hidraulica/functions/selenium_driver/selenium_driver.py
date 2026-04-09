@@ -91,18 +91,32 @@ class SeleniumDriver:
 
         options = Options()
 
-        # Flags obligatorios para headless
-        # Banderas clásicas para serverless-chrome v69
-        options.add_argument("--headless") # En Chrome 60-100 es solo --headless
+        # ── Flags críticos para AWS Lambda ────────────────────────────────────
+        options.add_argument("--headless=new")
         options.add_argument("--no-sandbox")
-        options.add_argument("--disable-dev-shm-usage")
+        options.add_argument("--disable-setuid-sandbox")       # requerido en contenedor Lambda
+        options.add_argument("--single-process")               # evita el crash "tab crashed" en Lambda
+        options.add_argument("--disable-dev-shm-usage")        # usa /tmp en vez de /dev/shm (64 MB en Lambda)
         options.add_argument("--disable-gpu")
-        options.add_argument("--single-process") # OBLIGATORIO para serverless-chrome antiguo en AWS Lambda
+        options.add_argument("--disable-software-rasterizer")
+        options.add_argument("--disable-extensions")
+        options.add_argument("--disable-background-networking")
+        options.add_argument("--disable-sync")
+        options.add_argument("--no-first-run")
+        options.add_argument("--no-zygote")                    # sin proceso zygote (incompatible con Lambda)
         options.add_argument("--window-size=1280,800")
+        # Rutas en /tmp para que Chrome pueda escribir dentro de Lambda
         options.add_argument("--user-data-dir=/tmp/chrome-user-data")
+        options.add_argument("--data-path=/tmp/data-path")
+        options.add_argument("--disk-cache-dir=/tmp/cache-dir")
+        options.add_argument("--crash-dumps-dir=/tmp/crashes")
+        # Reducir consumo de memoria
+        options.add_argument("--memory-pressure-off")
+        options.add_argument("--max_old_space_size=512")
 
-        # Directorio temporal para descargas automáticas
-        self._download_dir = tempfile.mkdtemp()
+        # Carpeta de descargas
+        self._download_dir = tempfile.mkdtemp(dir="/tmp")
+
         prefs = {
             "download.default_directory": self._download_dir,
             "download.prompt_for_download": False,
@@ -111,28 +125,19 @@ class SeleniumDriver:
         options.add_experimental_option("prefs", prefs)
 
         if _IS_LAMBDA:
-            # ── Entorno Lambda: Usar serverless-chrome antiguo en /opt configurado en el Dockerfile
-            options.binary_location = os.environ.get("CHROME_BIN", "/opt/headless-chromium")
-            service = Service(executable_path=os.environ.get("CHROMEDRIVER_PATH", "/opt/chromedriver"))
+            # 👉 Chrome for Testing instalado en el contenedor (ver Dockerfile)
+            options.binary_location = "/opt/chrome-linux64/chrome"
+            service = Service("/usr/bin/chromedriver")
         else:
-            # ── Entorno local: usar Chrome del sistema + webdriver-manager
-            try:
-                from webdriver_manager.chrome import ChromeDriverManager
-                from selenium.webdriver.chrome.service import Service as ChromeService
-            except ImportError:
-                raise ImportError(
-                    "En local instala webdriver-manager: pip install webdriver-manager"
-                )
-
-            # macOS: Chrome en /Applications
-            chrome_mac = "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-            if os.path.exists(chrome_mac):
-                options.binary_location = chrome_mac
+            # 👉 Entorno local
+            from webdriver_manager.chrome import ChromeDriverManager
+            from selenium.webdriver.chrome.service import Service as ChromeService
 
             service = ChromeService(ChromeDriverManager().install())
 
         self._driver = webdriver.Chrome(service=service, options=options)
         self._driver.set_page_load_timeout(PAGE_LOAD_TIMEOUT)
+
         logger.info("SeleniumDriver.connect → driver listo ✓")
 
     # ------------------------------------------------------------------

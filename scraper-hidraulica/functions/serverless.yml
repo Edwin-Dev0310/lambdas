@@ -8,6 +8,9 @@ provider:
         path: ./
         buildArgs:
           PROVENANCE: false
+        buildOptions:
+          - "--platform=linux/amd64"
+          - "--provenance=false"
   stage: ${self:custom.stage}
   region: ${self:custom.my-region}
   environment:
