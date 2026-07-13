@@ -1,0 +1,57 @@
+# ============================================================
+# config.yaml — Scraper ERCOT
+# Modificar este archivo sin tocar el código fuente.
+# ============================================================
+
+ercot:
+  # URL del producto en el portal ERCOT
+  url: "https://www.ercot.com/mp/data-products/data-product-details?id=NP6-327-CD"
+  # Texto que debe aparecer al final del nombre del archivo para identificarlo.
+  # Ejemplos: "csv" para _csv, "xlsx" para _xlsx, "NP6327" para cualquier variante.
+  file_pattern: "csv"
+
+# ------------------------------------------------------------
+# Filtros de búsqueda
+# ------------------------------------------------------------
+filter:
+  # Nombre exacto de la columna en el Excel/CSV donde se buscará
+  column: "ResourceName"
+  # Lista de valores a buscar (uno o varios)
+  values:
+    - "BOVINE_BOVINE"
+
+  # Tipo de comparación:
+  #   "list"     → columna isin(values)          [default]
+  #   "equals"   → columna == values[0]
+  #   "contains" → columna contiene values[0]    (case-insensitive)
+  match_type: "list"
+
+# ------------------------------------------------------------
+# Archivo de salida
+# ------------------------------------------------------------
+output:
+  # Carpeta local donde se guardan los Excel generados
+  folder: "output"
+  # Nombre del archivo; {datetime} se reemplaza con YYYYMMDD_HHMM
+  filename_format: "ERCOT_{datetime}.csv"
+  
+# ------------------------------------------------------------
+# Archivos de estado y log
+# ------------------------------------------------------------
+state_file: "state.json"   # registro del último archivo procesado
+log_file:   "scraper.log"  # bitácora de ejecución
+
+# ------------------------------------------------------------
+# SFTP (dejar host vacío "" para omitir este paso)
+# ------------------------------------------------------------
+sftp:
+  host:     "10.0.210.61"
+  port:     22
+  user:     "portafolio"
+  password: "7u(8K&c5"
+  # Ruta a llave privada RSA (dejar vacío si se usa contraseña)
+  private_key: ""
+  # Directorio remoto destino (debe terminar en /)
+  remote_dir: "/home/portafolio/Documents/ercort-test/"
+  # Crear el directorio remoto si no existe
+  create_remote_dir: true

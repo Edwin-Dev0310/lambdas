@@ -1,0 +1,248 @@
+{
+  "service": {
+    "service": "mflores-notification-overclocking-functions",
+    "serviceObject": {
+      "name": "mflores-notification-overclocking-functions"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.14",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1",
+        "STAGE": "prod",
+        "S3_BUCKET_NAME": "insumos-artemis-dev",
+        "S3_PREFIX": "mina2_offer_dispatch/overclocking/dispatch_overclocking/",
+        "SENDER_EMAIL": "operador_control_fisico@ammper.com",
+        "SUCCESS_TO_EMAILS": "operador_control_fisico@ammper.com",
+        "SUCCESS_CC_EMAILS": "",
+        "SUCCESS_BCC_EMAILS": "mflores@ammper.com,imoran@ammper.com",
+        "FAILURE_TO_EMAILS": "mjimenezr@ammper.com",
+        "FAILURE_CC_EMAILS": "",
+        "FAILURE_BCC_EMAILS": "mflores@ammper.com,imoran@ammper.com"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "NotifyOverclockingLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mflores-overclocking-notify-prod"
+            }
+          },
+          "NotifyOverclockingLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+                "S3Key": "serverless/mflores-notification-overclocking-functions/prod/1783716381586-2026-07-10T20:46:21.586Z/mflores-notification-overclocking-functions.zip"
+              },
+              "Handler": "handler.notify_overclocking",
+              "Runtime": "python3.14",
+              "FunctionName": "mflores-overclocking-notify-prod",
+              "MemorySize": 512,
+              "Timeout": 120,
+              "Tags": [
+                {
+                  "Key": "dev",
+                  "Value": "mflores"
+                },
+                {
+                  "Key": "project-name",
+                  "Value": "notification-overclocking"
+                },
+                {
+                  "Key": "env",
+                  "Value": "prod"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1",
+                  "STAGE": "prod",
+                  "S3_BUCKET_NAME": "insumos-artemis-dev",
+                  "S3_PREFIX": "mina2_offer_dispatch/overclocking/dispatch_overclocking/",
+                  "SENDER_EMAIL": "operador_control_fisico@ammper.com",
+                  "SUCCESS_TO_EMAILS": "operador_control_fisico@ammper.com",
+                  "SUCCESS_CC_EMAILS": "",
+                  "SUCCESS_BCC_EMAILS": "mflores@ammper.com,imoran@ammper.com",
+                  "FAILURE_TO_EMAILS": "mjimenezr@ammper.com",
+                  "FAILURE_CC_EMAILS": "",
+                  "FAILURE_BCC_EMAILS": "mflores@ammper.com,imoran@ammper.com"
+                }
+              },
+              "Role": "arn:aws:iam::587992493393:role/LambdaNotificationOverclockingRole"
+            },
+            "DependsOn": [
+              "NotifyOverclockingLogGroup"
+            ]
+          },
+          "NotifyOverclockingLambdaVersionZFscPyPGU7tDtkKl1Qs4MF0UTDVscyNHUcqrE0B63A": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "NotifyOverclockingLambdaFunction"
+              },
+              "CodeSha256": "akSjUmhV0hvZ+o3GiCY2nafXDWbNzAq0PdUu8Myy9LQ="
+            }
+          },
+          "NotifyOverclockingEventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "cron(30 3 * * ? *)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "NotifyOverclockingLambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "notifyOverclockingSchedule"
+                }
+              ]
+            }
+          },
+          "NotifyOverclockingLambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "NotifyOverclockingLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "NotifyOverclockingEventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
+            "Export": {
+              "Name": "sls-mflores-notification-overclocking-functions-prod-ServerlessDeploymentBucketName"
+            }
+          },
+          "NotifyOverclockingLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "NotifyOverclockingLambdaVersionZFscPyPGU7tDtkKl1Qs4MF0UTDVscyNHUcqrE0B63A"
+            },
+            "Export": {
+              "Name": "sls-mflores-notification-overclocking-functions-prod-NotifyOverclockingLambdaFunctionQualifiedArn"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "custom": {
+      "stage": "prod",
+      "my-region": "us-east-1",
+      "config": {
+        "dev": {
+          "my-region": "us-east-1",
+          "account_id": "587992493393",
+          "memory_size": 512,
+          "bucket_name": "test-edwin-notificaciones",
+          "s3_prefix": "mina2_offer_dispatch/overclocking/dispatch_overclocking/",
+          "sender_email": "operador_control_fisico@ammper.com",
+          "success_to_emails": "mflores@ammper.com",
+          "success_cc_emails": "",
+          "success_bcc_emails": "mflores@ammper.com",
+          "failure_to_emails": "mflores@ammper.com",
+          "failure_cc_emails": "",
+          "failure_bcc_emails": "mflores@ammper.com"
+        },
+        "prod": {
+          "my-region": "us-east-1",
+          "account_id": "587992493393",
+          "memory_size": 512,
+          "bucket_name": "insumos-artemis-dev",
+          "s3_prefix": "mina2_offer_dispatch/overclocking/dispatch_overclocking/",
+          "sender_email": "operador_control_fisico@ammper.com",
+          "success_to_emails": "operador_control_fisico@ammper.com",
+          "success_cc_emails": "",
+          "success_bcc_emails": "mflores@ammper.com,imoran@ammper.com",
+          "failure_to_emails": "mjimenezr@ammper.com",
+          "failure_cc_emails": "",
+          "failure_bcc_emails": "mflores@ammper.com,imoran@ammper.com"
+        }
+      },
+      "pythonRequirements": {
+        "useDownloadCache": true,
+        "useStaticCache": true,
+        "cacheLocation": "../cache_python_requirements_plugin",
+        "staticCacheMaxVersions": 5,
+        "fileName": "requirements.txt"
+      }
+    },
+    "plugins": null,
+    "pluginsData": {},
+    "functions": {
+      "notifyOverclocking": {
+        "name": "mflores-overclocking-notify-prod",
+        "handler": "handler.notify_overclocking",
+        "role": "arn:aws:iam::587992493393:role/LambdaNotificationOverclockingRole",
+        "memorySize": 512,
+        "timeout": 120,
+        "tags": {
+          "dev": "mflores",
+          "project-name": "notification-overclocking",
+          "env": "prod"
+        },
+        "events": [
+          {
+            "schedule": {
+              "rate": [
+                "cron(30 3 * * ? *)"
+              ],
+              "enabled": true
+            }
+          }
+        ],
+        "module": ".",
+        "package": {},
+        "memory": 512,
+        "runtime": "python3.14",
+        "vpc": {},
+        "versionLogicalId": "NotifyOverclockingLambdaVersionZFscPyPGU7tDtkKl1Qs4MF0UTDVscyNHUcqrE0B63A"
+      }
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless",
+    "initialServerlessConfig": {
+      "service": "mflores-notification-overclocking-functions",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
+      "functions": {
+        "$ref": "$[\"service\"][\"functions\"]"
+      },
+      "plugins": null
+    },
+    "appId": null,
+    "orgId": null,
+    "layers": {},
+    "artifact": "/Users/migueledwinflores/Proyects/Lambdas/notification-overclocking/functions/.serverless/mflores-notification-overclocking-functions.zip"
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mflores-notification-overclocking-functions/prod/1783716381586-2026-07-10T20:46:21.586Z",
+    "artifact": "mflores-notification-overclocking-functions.zip"
+  }
+}

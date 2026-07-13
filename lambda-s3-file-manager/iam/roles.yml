@@ -1,0 +1,18 @@
+Resources:
+  FractalLambdaS3FileManagerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: FractalLambdaS3FileManagerRole
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+        - Ref: FractalLambdaS3FileManagerPolicy

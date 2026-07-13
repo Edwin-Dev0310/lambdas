@@ -1,0 +1,79 @@
+service: mflores-notification-overclocking-functions
+
+provider:
+  name: aws
+  runtime: python3.14
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    # S3
+    S3_BUCKET_NAME: ${self:custom.config.${self:custom.stage}.bucket_name}
+    S3_PREFIX: ${self:custom.config.${self:custom.stage}.s3_prefix}
+    # SES - remitente
+    SENDER_EMAIL: ${self:custom.config.${self:custom.stage}.sender_email}
+    # Destinatarios - archivo encontrado
+    SUCCESS_TO_EMAILS: ${self:custom.config.${self:custom.stage}.success_to_emails}
+    SUCCESS_CC_EMAILS: ${self:custom.config.${self:custom.stage}.success_cc_emails}
+    SUCCESS_BCC_EMAILS: ${self:custom.config.${self:custom.stage}.success_bcc_emails}
+    # Destinatarios - archivo no encontrado
+    FAILURE_TO_EMAILS: ${self:custom.config.${self:custom.stage}.failure_to_emails}
+    FAILURE_CC_EMAILS: ${self:custom.config.${self:custom.stage}.failure_cc_emails}
+    FAILURE_BCC_EMAILS: ${self:custom.config.${self:custom.stage}.failure_bcc_emails}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "587992493393"
+      memory_size: 512
+      bucket_name: test-edwin-notificaciones
+      s3_prefix: "mina2_offer_dispatch/overclocking/dispatch_overclocking/"
+      sender_email: "operador_control_fisico@ammper.com"
+      success_to_emails: "mflores@ammper.com"
+      success_cc_emails: ""
+      success_bcc_emails: "mflores@ammper.com"
+      failure_to_emails: "mflores@ammper.com"
+      failure_cc_emails: ""
+      failure_bcc_emails: "mflores@ammper.com"
+    prod:
+      my-region: us-east-1
+      account_id: "587992493393"
+      memory_size: 512
+      bucket_name: insumos-artemis-dev
+      s3_prefix: "mina2_offer_dispatch/overclocking/dispatch_overclocking/"
+      sender_email: "operador_control_fisico@ammper.com"
+      success_to_emails: "operador_control_fisico@ammper.com"
+      success_cc_emails: ""
+      success_bcc_emails: "mflores@ammper.com,imoran@ammper.com"
+      failure_to_emails: "mjimenezr@ammper.com"
+      failure_cc_emails: ""
+      failure_bcc_emails: "mflores@ammper.com,imoran@ammper.com"
+  pythonRequirements:
+    useDownloadCache: true
+    useStaticCache: true
+    cacheLocation: "../cache_python_requirements_plugin"
+    staticCacheMaxVersions: 5
+    fileName: requirements.txt
+
+functions:
+  notifyOverclocking:
+    name: mflores-overclocking-notify-${self:custom.stage}
+    handler: handler.notify_overclocking
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaNotificationOverclockingRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 120
+    tags:
+      dev: mflores
+      project-name: notification-overclocking
+      env: ${self:custom.stage}
+    events:
+      - schedule:
+          rate: cron(30 3 * * ? *)
+          enabled: true
+
+plugins:
+  

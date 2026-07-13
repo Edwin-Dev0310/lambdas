@@ -1,0 +1,75 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "FractalLambdaS3FileManagerRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "RoleName": "FractalLambdaS3FileManagerRole",
+        "MaxSessionDuration": 3600,
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com"
+              },
+              "Action": [
+                "sts:AssumeRole"
+              ]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          {
+            "Ref": "FractalLambdaS3FileManagerPolicy"
+          }
+        ]
+      }
+    },
+    "FractalLambdaS3FileManagerPolicy": {
+      "Type": "AWS::IAM::ManagedPolicy",
+      "Properties": {
+        "ManagedPolicyName": "FractalLambdaS3FileManagerPolicy",
+        "Description": "Allow Lambda to list and upload files to S3",
+        "Path": "/",
+        "PolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:ListBucket",
+                "s3:GetBucketLocation"
+              ],
+              "Resource": [
+                "arn:aws:s3:::energrid-documents"
+              ]
+            },
+            {
+              "Effect": "Allow",
+              "Action": [
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:DeleteObject"
+              ],
+              "Resource": [
+                "arn:aws:s3:::energrid-documents/*"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+      "Export": {
+        "Name": "sls-mflores-fractal-s3-file-manager-role-prod-ServerlessDeploymentBucketName"
+      }
+    }
+  }
+}

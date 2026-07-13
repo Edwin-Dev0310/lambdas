@@ -1,0 +1,368 @@
+{
+  "/Users/migueledwinflores/Proyects/Lambdas/lambda-s3-file-manager/iam/serverless.yml": {
+    "versionFramework": "4.39.0",
+    "servicePath": "/Users/migueledwinflores/Proyects/Lambdas/lambda-s3-file-manager/iam/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "mflores-fractal-s3-file-manager-role",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.12",
+        "stage": "prod",
+        "region": "us-east-1",
+        "environment": {
+          "REGION": "us-east-1"
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "FractalLambdaS3FileManagerRole": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "RoleName": "FractalLambdaS3FileManagerRole",
+                "MaxSessionDuration": 3600,
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": "lambda.amazonaws.com"
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                },
+                "ManagedPolicyArns": [
+                  "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                  {
+                    "Ref": "FractalLambdaS3FileManagerPolicy"
+                  }
+                ]
+              }
+            },
+            "FractalLambdaS3FileManagerPolicy": {
+              "Type": "AWS::IAM::ManagedPolicy",
+              "Properties": {
+                "ManagedPolicyName": "FractalLambdaS3FileManagerPolicy",
+                "Description": "Allow Lambda to list and upload files to S3",
+                "Path": "/",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "s3:ListBucket",
+                        "s3:GetBucketLocation"
+                      ],
+                      "Resource": [
+                        "arn:aws:s3:::energrid-documents"
+                      ]
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "s3:GetObject",
+                        "s3:PutObject",
+                        "s3:DeleteObject"
+                      ],
+                      "Resource": [
+                        "arn:aws:s3:::energrid-documents/*"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "Export": {
+                "Name": "sls-mflores-fractal-s3-file-manager-role-prod-ServerlessDeploymentBucketName"
+              }
+            }
+          }
+        }
+      },
+      "custom": {
+        "stage": "prod",
+        "my-region": "us-east-1",
+        "config": {
+          "prod": {
+            "account_id": "857285351963",
+            "bucket_name": "energrid-documents"
+          },
+          "dev": {
+            "account_id": "857285351963",
+            "bucket_name": "energrid-documents"
+          }
+        }
+      },
+      "resources": {
+        "Resources": {
+          "FractalLambdaS3FileManagerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "FractalLambdaS3FileManagerRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "FractalLambdaS3FileManagerPolicy"
+                }
+              ]
+            }
+          },
+          "FractalLambdaS3FileManagerPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "FractalLambdaS3FileManagerPolicy",
+              "Description": "Allow Lambda to list and upload files to S3",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:ListBucket",
+                      "s3:GetBucketLocation"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents"
+                    ]
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetObject",
+                      "s3:PutObject",
+                      "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents/*"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {}
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "FractalLambdaS3FileManagerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "FractalLambdaS3FileManagerRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "FractalLambdaS3FileManagerPolicy"
+                }
+              ]
+            }
+          },
+          "FractalLambdaS3FileManagerPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "FractalLambdaS3FileManagerPolicy",
+              "Description": "Allow Lambda to list and upload files to S3",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:ListBucket",
+                      "s3:GetBucketLocation"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents"
+                    ]
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetObject",
+                      "s3:PutObject",
+                      "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents/*"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-mflores-fractal-s3-file-manager-role-prod-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: mflores-fractal-s3-file-manager-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    prod:\n      account_id: '857285351963'\n      bucket_name: energrid-documents\n    dev:\n      account_id: '857285351963'\n      bucket_name: energrid-documents\n\nresources:\n- ${file(roles.yml)}\n- ${file(policies.yml)}\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "prod"
+    },
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "857285351963",
+    "serviceProviderAwsCfStackName": "mflores-fractal-s3-file-manager-role-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:857285351963:stack/mflores-fractal-s3-file-manager-role-prod/b5b87280-7be4-11f1-b098-0e2903357f0d",
+    "serviceProviderAwsCfStackCreated": "2026-07-09T22:22:45.808Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+        "ExportName": "sls-mflores-fractal-s3-file-manager-role-prod-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "FractalLambdaS3FileManagerRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "FractalLambdaS3FileManagerRole",
+            "MaxSessionDuration": 3600,
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              {
+                "Ref": "FractalLambdaS3FileManagerPolicy"
+              }
+            ]
+          }
+        },
+        "FractalLambdaS3FileManagerPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "ManagedPolicyName": "FractalLambdaS3FileManagerPolicy",
+            "Description": "Allow Lambda to list and upload files to S3",
+            "Path": "/",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket",
+                    "s3:GetBucketLocation"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::energrid-documents"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:DeleteObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::energrid-documents/*"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "Export": {
+            "Name": "sls-mflores-fractal-s3-file-manager-role-prod-ServerlessDeploymentBucketName"
+          }
+        }
+      }
+    }
+  }
+}

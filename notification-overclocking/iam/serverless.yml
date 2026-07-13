@@ -1,0 +1,24 @@
+service: mflores-notification-overclocking-role
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      account_id: '587992493393'
+      bucket_name: test-edwin-notificaciones
+    prod:
+      account_id: '587992493393'
+      bucket_name: insumos-artemis-dev
+
+resources:
+- ${file(roles.yml)}
+- ${file(policies.yml)}

@@ -1,0 +1,51 @@
+service: mflores-fractal-s3-file-manager-functions
+
+provider:
+  name: aws
+  runtime: python3.14
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  httpApi:
+    cors: true
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    S3_BUCKET_NAME: ${self:custom.config.${self:custom.stage}.bucket_name}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "857285351963"
+      memory_size: 1024
+      bucket_name: energrid-documents
+    prod:
+      my-region: us-east-1
+      account_id: "857285351963"
+      memory_size: 1024
+      bucket_name: energrid-documents
+  pythonRequirements:
+    useDownloadCache: true
+    useStaticCache: true
+    cacheLocation: "../cache_python_requirements_plugin"
+    staticCacheMaxVersions: 5
+    fileName: requirements.txt
+
+functions:
+  s3Manager:
+    handler: handler.s3_manager
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/FractalLambdaS3FileManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 28
+    tags:
+      dev: mflores
+      project-name: FractalLambdaS3FileManagerPolicy-s3-file-manager
+      env: ${self:custom.stage}
+    events:
+      - httpApi:
+          path: /fractal-s3-file-manager
+          method: POST
+
+plugins:
