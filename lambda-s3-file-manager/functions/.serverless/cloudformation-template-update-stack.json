@@ -1,0 +1,225 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "S3ManagerLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/mflores-fractal-s3-file-manager-functions-prod-s3Manager"
+      }
+    },
+    "S3ManagerLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "S3Key": "serverless/mflores-fractal-s3-file-manager-functions/prod/1784049407644-2026-07-14T17:16:47.644Z/mflores-fractal-s3-file-manager-functions.zip"
+        },
+        "Handler": "handler.s3_manager",
+        "Runtime": "python3.14",
+        "FunctionName": "mflores-fractal-s3-file-manager-functions-prod-s3Manager",
+        "MemorySize": 1024,
+        "Timeout": 28,
+        "Tags": [
+          {
+            "Key": "dev",
+            "Value": "mflores"
+          },
+          {
+            "Key": "project-name",
+            "Value": "FractalLambdaS3FileManagerPolicy-s3-file-manager"
+          },
+          {
+            "Key": "env",
+            "Value": "prod"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "REGION": "us-east-1",
+            "STAGE": "prod",
+            "S3_BUCKET_NAME": "energrid-documents"
+          }
+        },
+        "Role": "arn:aws:iam::857285351963:role/FractalLambdaS3FileManagerRole"
+      },
+      "DependsOn": [
+        "S3ManagerLogGroup"
+      ]
+    },
+    "S3ManagerLambdaVersionmAgqjEIg1r8D62fKRt6CCKE2SuDZYcEUAzZYjlhOk": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "S3ManagerLambdaFunction"
+        },
+        "CodeSha256": "b4vEcJt87Lc5pOBq7kVh1S88sswYKVulE9ySULUWWRE="
+      }
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "prod-mflores-fractal-s3-file-manager-functions",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Content-Type",
+            "X-Amz-Date",
+            "Authorization",
+            "X-Api-Key",
+            "X-Amz-Security-Token",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id"
+          ],
+          "AllowMethods": [
+            "OPTIONS",
+            "POST"
+          ],
+          "AllowOrigins": [
+            "*"
+          ]
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        }
+      }
+    },
+    "S3ManagerLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "S3ManagerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationS3Manager": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "S3ManagerLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostFractalDashs3DashfileDashmanager": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /fractal-s3-file-manager",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationS3Manager"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationS3Manager"
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+      "Export": {
+        "Name": "sls-mflores-fractal-s3-file-manager-functions-prod-ServerlessDeploymentBucketName"
+      }
+    },
+    "S3ManagerLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "S3ManagerLambdaVersionmAgqjEIg1r8D62fKRt6CCKE2SuDZYcEUAzZYjlhOk"
+      },
+      "Export": {
+        "Name": "sls-mflores-fractal-s3-file-manager-functions-prod-S3ManagerLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-mflores-fractal-s3-file-manager-functions-prod-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-mflores-fractal-s3-file-manager-functions-prod-HttpApiUrl"
+      }
+    }
+  }
+}

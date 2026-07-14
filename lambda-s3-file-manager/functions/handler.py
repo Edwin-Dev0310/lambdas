@@ -3,7 +3,10 @@ import os
 import base64
 import boto3
 from botocore.exceptions import ClientError
-from datetime import datetime, timezone
+from datetime import datetime
+from zoneinfo import ZoneInfo
+
+LOCAL_TZ = ZoneInfo('America/Mexico_City')
 
 BUCKET_NAME = os.environ.get('S3_BUCKET_NAME', '')
 REGION = os.environ.get('REGION', 'us-east-1')
@@ -49,7 +52,7 @@ def _list_s3(prefix=''):
 
 
 def _build_s3_key(base_name):
-    now = datetime.now(timezone.utc)
+    now = datetime.now(LOCAL_TZ)
     year  = now.strftime('%Y')
     month = now.strftime('%m')
     day   = now.strftime('%d')
