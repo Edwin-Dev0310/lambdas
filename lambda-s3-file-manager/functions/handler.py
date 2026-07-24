@@ -58,7 +58,7 @@ def _build_s3_key(base_name):
     day   = now.strftime('%d')
     time  = now.strftime('%H%M%S')
     name  = base_name.removesuffix('.csv')
-    return f"fractal/{year}/{month}/{day}/{name}_{time}.csv"
+    return f"fractal/unprocessed/{year}/{month}/{day}/{name}_{time}.csv"
 
 
 def _upload_csv(file_base64, base_name):

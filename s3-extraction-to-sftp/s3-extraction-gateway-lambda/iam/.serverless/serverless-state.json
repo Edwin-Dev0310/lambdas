@@ -1,0 +1,194 @@
+{
+  "service": {
+    "service": "mflores-s3-extraction-gateway-role",
+    "serviceObject": {
+      "name": "mflores-s3-extraction-gateway-role"
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "LambdaS3ExtractionGatewayRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "LambdaS3ExtractionGatewayRole",
+              "MaxSessionDuration": 3600,
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              },
+              "ManagedPolicyArns": [
+                "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+                {
+                  "Ref": "LambdaS3ExtractionGatewayPolicy"
+                }
+              ]
+            }
+          },
+          "LambdaS3ExtractionGatewayPolicy": {
+            "Type": "AWS::IAM::ManagedPolicy",
+            "Properties": {
+              "ManagedPolicyName": "LambdaS3ExtractionGatewayPolicy",
+              "Description": "Permisos minimos para listar, leer, escribir y eliminar objetos del bucket configurado",
+              "Path": "/",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:ListBucket"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents"
+                    ]
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "s3:GetObject",
+                      "s3:PutObject",
+                      "s3:DeleteObject"
+                    ],
+                    "Resource": [
+                      "arn:aws:s3:::energrid-documents/*"
+                    ]
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-mflores-s3-extraction-gateway-role-prod-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
+    },
+    "custom": {
+      "stage": "prod",
+      "my-region": "us-east-1",
+      "config": {
+        "dev": {
+          "account_id": "857285351963",
+          "bucket_name": "energrid-documents"
+        },
+        "prod": {
+          "account_id": "857285351963",
+          "bucket_name": "energrid-documents"
+        }
+      }
+    },
+    "pluginsData": {},
+    "functions": {},
+    "resources": {
+      "Resources": {
+        "LambdaS3ExtractionGatewayRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "LambdaS3ExtractionGatewayRole",
+            "MaxSessionDuration": 3600,
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            },
+            "ManagedPolicyArns": [
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              {
+                "Ref": "LambdaS3ExtractionGatewayPolicy"
+              }
+            ]
+          }
+        },
+        "LambdaS3ExtractionGatewayPolicy": {
+          "Type": "AWS::IAM::ManagedPolicy",
+          "Properties": {
+            "ManagedPolicyName": "LambdaS3ExtractionGatewayPolicy",
+            "Description": "Permisos minimos para listar, leer, escribir y eliminar objetos del bucket configurado",
+            "Path": "/",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:ListBucket"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::energrid-documents"
+                  ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:GetObject",
+                    "s3:PutObject",
+                    "s3:DeleteObject"
+                  ],
+                  "Resource": [
+                    "arn:aws:s3:::energrid-documents/*"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {}
+    },
+    "configValidationMode": "warn",
+    "serviceFilename": "serverless",
+    "initialServerlessConfig": {
+      "service": "mflores-s3-extraction-gateway-role",
+      "provider": {
+        "$ref": "$[\"service\"][\"provider\"]"
+      },
+      "custom": {
+        "$ref": "$[\"service\"][\"custom\"]"
+      },
+      "resources": {
+        "$ref": "$[\"service\"][\"resources\"]"
+      }
+    },
+    "appId": null,
+    "orgId": null,
+    "layers": {}
+  },
+  "package": {
+    "artifactDirectoryName": "serverless/mflores-s3-extraction-gateway-role/prod/1784166581903-2026-07-16T01:49:41.903Z",
+    "artifact": ""
+  }
+}

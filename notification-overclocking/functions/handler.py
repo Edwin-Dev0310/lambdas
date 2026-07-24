@@ -62,9 +62,11 @@ def _transform_csv(csv_bytes):
         raise ValueError(f'Columna B esperada: "hour", encontrada: "{headers[1]}".')
     if 'offer_d MW' not in headers:
         raise ValueError('No se encontro la columna "offer_d MW".')
+    if 'overclocking' not in headers:
+        raise ValueError('No se encontro la columna "overclocking".')
 
     output = io.StringIO()
-    writer = csv.DictWriter(output, fieldnames=['date', 'hour', 'on_off'])
+    writer = csv.DictWriter(output, fieldnames=['date', 'hour', 'on_off', 'overclocking'])
     writer.writeheader()
 
     for row in reader:
@@ -77,6 +79,7 @@ def _transform_csv(csv_bytes):
             'date':   row['date'],
             'hour':   row['hour'],
             'on_off': 1 if offer_val > 0 else 0,
+            'overclocking':   row['overclocking'],
         })
 
     return output.getvalue().encode('utf-8')
@@ -132,7 +135,7 @@ def _success_email_content(file_name):
     subject   = f"[Overclocking Dispatch] Archivo disponible: {file_name}"
     body_text = (
         f"Se encontro y proceso correctamente el archivo: {file_name}\n\n"
-        "Se adjunta el CSV transformado con las columnas: date, hour, on_off.\n\n"
+        "Se adjunta el CSV transformado con las columnas: date, hour, on_off, overclocking.\n\n"
         "  - on_off = 1  cuando  offer_d MW > 0\n"
         "  - on_off = 0  cuando  offer_d MW = 0\n"
     )

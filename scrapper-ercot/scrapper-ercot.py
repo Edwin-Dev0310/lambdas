@@ -301,21 +301,51 @@ def filter_records(
 # ===========================================================================
 
 def save_output_csv(
-    df: pd.DataFrame, cfg_output: dict, logger: logging.Logger
-) -> Path:
-    """Guarda el DataFrame filtrado como CSV en la carpeta de salida."""
+    df: pd.DataFrame,
+    cfg_output: dict,
+    filter_values: list,
+    logger: logging.Logger,
+) -> tuple[Path | None, Path | None]:
+    """
+    Guarda el DataFrame en hasta dos rutas según configuración:
+
+      Historial : {folder}/historial/YYYY/MM/DD/ercot_HHmmss.csv
+      Último    : {folder}/ercot_{value}_last_file.csv
+
+    Retorna (history_path, last_path) — None cuando la opción está deshabilitada.
+    {value} = valores del filtro en minúsculas unidos por "_".
+    """
     folder = Path(cfg_output.get("folder", "output"))
-    folder.mkdir(parents=True, exist_ok=True)
+    now = datetime.now()
 
-    ts = datetime.now().strftime("%Y%m%d_%H%M")
-    filename = cfg_output.get("filename_format", "ERCOT_{datetime}.csv").replace(
-        "{datetime}", ts
-    )
-    output_path = folder / filename
+    # Identificador del filtro en minúsculas (ej. "bovine_bovine")
+    value = "_".join(str(v).strip().lower() for v in filter_values)
 
-    df.to_csv(output_path, index=False, encoding="utf-8")
-    logger.info("CSV generado: %s (%d filas)", output_path, len(df))
-    return output_path
+    history_path: Path | None = None
+    last_path: Path | None = None
+
+    # ── Historial: folder/historial/YYYY/MM/DD/ercot_HHmmss.csv ─────────────
+    if cfg_output.get("save_history", True):
+        hist_dir = (
+            folder
+            / "historial"
+            / now.strftime("%Y")
+            / now.strftime("%m")
+            / now.strftime("%d")
+        )
+        hist_dir.mkdir(parents=True, exist_ok=True)
+        history_path = hist_dir / ("ercot_%s.csv" % now.strftime("%H%M%S"))
+        df.to_csv(history_path, index=False, encoding="utf-8")
+        logger.info("Historial: %s (%d filas)", history_path, len(df))
+
+    # ── Último: folder/ercot_{value}_last_file.csv ───────────────────────────
+    if cfg_output.get("save_last_file", True):
+        folder.mkdir(parents=True, exist_ok=True)
+        last_path = folder / ("ercot_%s_last_file.csv" % value)
+        df.to_csv(last_path, index=False, encoding="utf-8")
+        logger.info("Último: %s (%d filas)", last_path, len(df))
+
+    return history_path, last_path
 
 
 # ===========================================================================
@@ -444,22 +474,45 @@ def main() -> None:
         if df_filtered.empty:
             logger.warning("Sin registros que coincidan con el filtro.")
 
-        output_path = None
+        history_path: Path | None = None
+        last_path: Path | None = None
         if not df_filtered.empty:
-            output_path = save_output_csv(df_filtered, cfg["output"], logger)
+            history_path, last_path = save_output_csv(
+                df_filtered, cfg["output"], cfg["filter"]["values"], logger
+            )
 
         sftp_cfg = cfg.get("sftp", {})
-        if sftp_cfg.get("host") and output_path:
+        upload_mode = sftp_cfg.get("upload_mode", "last")
+        base_remote = sftp_cfg.get("remote_dir", "/").rstrip("/")
+
+        if upload_mode == "history":
+            # Replicar estructura YYYY/MM/DD en el servidor remoto
+            now = datetime.now()
+            remote_dir = "%s/%s/%s/%s/" % (
+                base_remote,
+                now.strftime("%Y"),
+                now.strftime("%m"),
+                now.strftime("%d"),
+            )
+            upload_target = history_path
+            create_dir = True  # siempre crear la ruta de fecha
+        else:
+            # Subir el archivo único "last" al directorio base
+            remote_dir = base_remote + "/"
+            upload_target = last_path
+            create_dir = sftp_cfg.get("create_remote_dir", False)
+
+        if sftp_cfg.get("host") and upload_target:
             try:
                 upload_sftp(
-                    output_path,
+                    upload_target,
                     host=sftp_cfg["host"],
                     port=int(sftp_cfg.get("port", 22)),
                     user=sftp_cfg["user"],
                     password=sftp_cfg.get("password", ""),
                     private_key=sftp_cfg.get("private_key", ""),
-                    remote_dir=sftp_cfg.get("remote_dir", "/"),
-                    create_dir=sftp_cfg.get("create_remote_dir", False),
+                    remote_dir=remote_dir,
+                    create_dir=create_dir,
                     logger=logger,
                 )
                 bitacora["resultado_sftp"] = "OK"

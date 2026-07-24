@@ -1,0 +1,916 @@
+{
+  "/Users/migueledwinflores/claude-dev/s3-extraction-gateway-lambda/functions/serverless.yml": {
+    "versionFramework": "4.39.0",
+    "servicePath": "/Users/migueledwinflores/claude-dev/s3-extraction-gateway-lambda/functions/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "mflores-s3-extraction-functions",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.14",
+        "stage": "prod",
+        "region": "us-east-1",
+        "apiGateway": {
+          "apiKeys": "<REDACTED>"
+        },
+        "environment": {
+          "REGION": "us-east-1",
+          "STAGE": "prod",
+          "BUCKET_NAME": "energrid-documents",
+          "SOURCE_PREFIX": "fractal/scada/",
+          "PROCESSED_PREFIX": "fractal/processed/",
+          "URL_EXPIRATION_SECONDS": "300"
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "S3ExtractionGatewayLogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/mflores-s3-extraction-prod"
+              }
+            },
+            "S3ExtractionGatewayLambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                  "S3Key": "serverless/mflores-s3-extraction-functions/prod/1784168016767-2026-07-16T02:13:36.767Z/mflores-s3-extraction-functions.zip"
+                },
+                "Handler": "handler.lambda_handler",
+                "Runtime": "python3.14",
+                "FunctionName": "mflores-s3-extraction-prod",
+                "MemorySize": 256,
+                "Timeout": 30,
+                "Tags": [
+                  {
+                    "Key": "project-name",
+                    "Value": "mflores-s3-extraction"
+                  },
+                  {
+                    "Key": "env",
+                    "Value": "prod"
+                  }
+                ],
+                "Environment": {
+                  "Variables": {
+                    "REGION": "us-east-1",
+                    "STAGE": "prod",
+                    "BUCKET_NAME": "energrid-documents",
+                    "SOURCE_PREFIX": "fractal/scada/",
+                    "PROCESSED_PREFIX": "fractal/processed/",
+                    "URL_EXPIRATION_SECONDS": "300"
+                  }
+                },
+                "Role": "arn:aws:iam::857285351963:role/LambdaS3ExtractionGatewayRole"
+              },
+              "DependsOn": [
+                "S3ExtractionGatewayLogGroup"
+              ]
+            },
+            "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "S3ExtractionGatewayLambdaFunction"
+                },
+                "CodeSha256": "I4fK+FjBrnH4BebwD/522SvfHIbzkV8qJN4hsivPOnA="
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "prod-mflores-s3-extraction-functions",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceFiles": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "files",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodFilesPost": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "POST",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceFiles"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "S3ExtractionGatewayLambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "S3ExtractionGatewayLambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1784168005805": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "prod"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodFilesPost"
+              ]
+            },
+            "ApiGatewayApiKey1": "<REDACTED>",
+            "ApiGatewayUsagePlan": {
+              "Type": "AWS::ApiGateway::UsagePlan",
+              "DependsOn": "ApiGatewayDeployment1784168005805",
+              "Properties": {
+                "ApiStages": [
+                  {
+                    "ApiId": {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "Stage": "prod"
+                  }
+                ],
+                "Description": "Usage plan for mflores-s3-extraction-functions prod stage",
+                "UsagePlanName": "mflores-s3-extraction-functions-prod"
+              }
+            },
+            "ApiGatewayUsagePlanKey1": {
+              "Type": "AWS::ApiGateway::UsagePlanKey",
+              "Properties": {
+                "KeyId": {
+                  "Ref": "ApiGatewayApiKey1"
+                },
+                "KeyType": "API_KEY",
+                "UsagePlanId": {
+                  "Ref": "ApiGatewayUsagePlan"
+                }
+              }
+            },
+            "S3ExtractionGatewayLambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "S3ExtractionGatewayLambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "Export": {
+                "Name": "sls-mflores-s3-extraction-functions-prod-ServerlessDeploymentBucketName"
+              }
+            },
+            "S3ExtractionGatewayLambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA"
+              },
+              "Export": {
+                "Name": "sls-mflores-s3-extraction-functions-prod-S3ExtractionGatewayLambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/prod"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-mflores-s3-extraction-functions-prod-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "custom": {
+        "stage": "prod",
+        "my-region": "us-east-1",
+        "config": {
+          "dev": {
+            "my-region": "us-east-1",
+            "account_id": "857285351963",
+            "memory_size": 256,
+            "bucket_name": "energrid-documents",
+            "source_prefix": "fractal/scada/",
+            "processed_prefix": "fractal/processed/",
+            "url_expiration_seconds": 300
+          },
+          "prod": {
+            "my-region": "us-east-1",
+            "account_id": "857285351963",
+            "memory_size": 256,
+            "bucket_name": "energrid-documents",
+            "source_prefix": "fractal/scada/",
+            "processed_prefix": "fractal/processed/",
+            "url_expiration_seconds": 300
+          }
+        },
+        "pythonRequirements": {
+          "useDownloadCache": true,
+          "useStaticCache": true,
+          "cacheLocation": "../cache_python_requirements_plugin",
+          "staticCacheMaxVersions": 5,
+          "fileName": "requirements.txt"
+        }
+      },
+      "functions": {
+        "s3ExtractionGateway": {
+          "name": "mflores-s3-extraction-prod",
+          "handler": "handler.lambda_handler",
+          "role": "arn:aws:iam::857285351963:role/LambdaS3ExtractionGatewayRole",
+          "memorySize": 256,
+          "timeout": 30,
+          "tags": {
+            "project-name": "mflores-s3-extraction",
+            "env": "prod"
+          },
+          "events": [
+            {
+              "http": {
+                "path": "files",
+                "method": "post",
+                "private": true,
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "module": ".",
+          "package": {},
+          "memory": 256,
+          "runtime": "python3.14",
+          "vpc": {},
+          "versionLogicalId": "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA"
+        }
+      },
+      "plugins": null
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.14",
+      "stage": "prod",
+      "region": "us-east-1",
+      "apiGateway": {
+        "apiKeys": "<REDACTED>"
+      },
+      "environment": {
+        "REGION": "us-east-1",
+        "STAGE": "prod",
+        "BUCKET_NAME": "energrid-documents",
+        "SOURCE_PREFIX": "fractal/scada/",
+        "PROCESSED_PREFIX": "fractal/processed/",
+        "URL_EXPIRATION_SECONDS": "300"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "S3ExtractionGatewayLogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mflores-s3-extraction-prod"
+            }
+          },
+          "S3ExtractionGatewayLambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/mflores-s3-extraction-functions/prod/1784168016767-2026-07-16T02:13:36.767Z/mflores-s3-extraction-functions.zip"
+              },
+              "Handler": "handler.lambda_handler",
+              "Runtime": "python3.14",
+              "FunctionName": "mflores-s3-extraction-prod",
+              "MemorySize": 256,
+              "Timeout": 30,
+              "Tags": [
+                {
+                  "Key": "project-name",
+                  "Value": "mflores-s3-extraction"
+                },
+                {
+                  "Key": "env",
+                  "Value": "prod"
+                }
+              ],
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1",
+                  "STAGE": "prod",
+                  "BUCKET_NAME": "energrid-documents",
+                  "SOURCE_PREFIX": "fractal/scada/",
+                  "PROCESSED_PREFIX": "fractal/processed/",
+                  "URL_EXPIRATION_SECONDS": "300"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/LambdaS3ExtractionGatewayRole"
+            },
+            "DependsOn": [
+              "S3ExtractionGatewayLogGroup"
+            ]
+          },
+          "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "S3ExtractionGatewayLambdaFunction"
+              },
+              "CodeSha256": "I4fK+FjBrnH4BebwD/522SvfHIbzkV8qJN4hsivPOnA="
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "prod-mflores-s3-extraction-functions",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceFiles": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "files",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodFilesPost": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "POST",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceFiles"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "S3ExtractionGatewayLambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "S3ExtractionGatewayLambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1784168005805": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "prod"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodFilesPost"
+            ]
+          },
+          "ApiGatewayApiKey1": "<REDACTED>",
+          "ApiGatewayUsagePlan": {
+            "Type": "AWS::ApiGateway::UsagePlan",
+            "DependsOn": "ApiGatewayDeployment1784168005805",
+            "Properties": {
+              "ApiStages": [
+                {
+                  "ApiId": {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "Stage": "prod"
+                }
+              ],
+              "Description": "Usage plan for mflores-s3-extraction-functions prod stage",
+              "UsagePlanName": "mflores-s3-extraction-functions-prod"
+            }
+          },
+          "ApiGatewayUsagePlanKey1": {
+            "Type": "AWS::ApiGateway::UsagePlanKey",
+            "Properties": {
+              "KeyId": {
+                "Ref": "ApiGatewayApiKey1"
+              },
+              "KeyType": "API_KEY",
+              "UsagePlanId": {
+                "Ref": "ApiGatewayUsagePlan"
+              }
+            }
+          },
+          "S3ExtractionGatewayLambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "S3ExtractionGatewayLambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-mflores-s3-extraction-functions-prod-ServerlessDeploymentBucketName"
+            }
+          },
+          "S3ExtractionGatewayLambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA"
+            },
+            "Export": {
+              "Name": "sls-mflores-s3-extraction-functions-prod-S3ExtractionGatewayLambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/prod"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-mflores-s3-extraction-functions-prod-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: mflores-s3-extraction-functions\n\nprovider:\n  name: aws\n  runtime: python3.14\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  apiGateway:\n    apiKeys:\n      - name: mflores-s3-extraction-${self:custom.stage}-key\n  environment:\n    REGION: ${self:provider.region}\n    STAGE: ${self:custom.stage}\n    BUCKET_NAME: ${self:custom.config.${self:custom.stage}.bucket_name}\n    SOURCE_PREFIX: ${self:custom.config.${self:custom.stage}.source_prefix}\n    PROCESSED_PREFIX: ${self:custom.config.${self:custom.stage}.processed_prefix}\n    URL_EXPIRATION_SECONDS: ${self:custom.config.${self:custom.stage}.url_expiration_seconds}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    dev:\n      my-region: us-east-1\n      account_id: \"857285351963\"\n      memory_size: 256\n      bucket_name: \"energrid-documents\"\n      source_prefix: \"fractal/scada/\"\n      processed_prefix: \"fractal/processed/\"\n      url_expiration_seconds: 300\n    prod:\n      my-region: us-east-1\n      account_id: \"857285351963\"\n      memory_size: 256\n      bucket_name: \"energrid-documents\"\n      source_prefix: \"fractal/scada/\"\n      processed_prefix: \"fractal/processed/\"\n      url_expiration_seconds: 300\n  pythonRequirements:\n    useDownloadCache: true\n    useStaticCache: true\n    cacheLocation: \"../cache_python_requirements_plugin\"\n    staticCacheMaxVersions: 5\n    fileName: requirements.txt\n\nfunctions:\n  s3ExtractionGateway:\n    name: mflores-s3-extraction-${self:custom.stage}\n    handler: handler.lambda_handler\n    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaS3ExtractionGatewayRole\n    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}\n    timeout: 30\n    tags:\n      project-name: mflores-s3-extraction\n      env: ${self:custom.stage}\n    events:\n      - http:\n          path: files\n          method: post\n          private: true\n\nplugins:\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "prod"
+    },
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "857285351963",
+    "serviceProviderAwsCfStackName": "mflores-s3-extraction-functions-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:857285351963:stack/mflores-s3-extraction-functions-prod/730a52f0-80ad-11f1-ac78-0e937ef42c17",
+    "serviceProviderAwsCfStackCreated": "2026-07-16T00:29:47.446Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "S3ExtractionGatewayLambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:857285351963:function:mflores-s3-extraction-prod:1",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-mflores-s3-extraction-functions-prod-S3ExtractionGatewayLambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://6fg3ik1l66.execute-api.us-east-1.amazonaws.com/prod",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-mflores-s3-extraction-functions-prod-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+        "ExportName": "sls-mflores-s3-extraction-functions-prod-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "S3ExtractionGatewayLogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/mflores-s3-extraction-prod"
+          }
+        },
+        "S3ExtractionGatewayLambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "S3Key": "serverless/mflores-s3-extraction-functions/prod/1784168016767-2026-07-16T02:13:36.767Z/mflores-s3-extraction-functions.zip"
+            },
+            "Handler": "handler.lambda_handler",
+            "Runtime": "python3.14",
+            "FunctionName": "mflores-s3-extraction-prod",
+            "MemorySize": 256,
+            "Timeout": 30,
+            "Tags": [
+              {
+                "Key": "project-name",
+                "Value": "mflores-s3-extraction"
+              },
+              {
+                "Key": "env",
+                "Value": "prod"
+              }
+            ],
+            "Environment": {
+              "Variables": {
+                "REGION": "us-east-1",
+                "STAGE": "prod",
+                "BUCKET_NAME": "energrid-documents",
+                "SOURCE_PREFIX": "fractal/scada/",
+                "PROCESSED_PREFIX": "fractal/processed/",
+                "URL_EXPIRATION_SECONDS": "300"
+              }
+            },
+            "Role": "arn:aws:iam::857285351963:role/LambdaS3ExtractionGatewayRole"
+          },
+          "DependsOn": [
+            "S3ExtractionGatewayLogGroup"
+          ]
+        },
+        "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "S3ExtractionGatewayLambdaFunction"
+            },
+            "CodeSha256": "I4fK+FjBrnH4BebwD/522SvfHIbzkV8qJN4hsivPOnA="
+          }
+        },
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "prod-mflores-s3-extraction-functions",
+            "EndpointConfiguration": {
+              "Types": [
+                "EDGE"
+              ]
+            },
+            "Policy": ""
+          }
+        },
+        "ApiGatewayResourceFiles": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Fn::GetAtt": [
+                "ApiGatewayRestApi",
+                "RootResourceId"
+              ]
+            },
+            "PathPart": "files",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodFilesPost": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "POST",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceFiles"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "S3ExtractionGatewayLambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "S3ExtractionGatewayLambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayDeployment1784168005805": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "prod"
+          },
+          "DependsOn": [
+            "ApiGatewayMethodFilesPost"
+          ]
+        },
+        "ApiGatewayApiKey1": "<REDACTED>",
+        "ApiGatewayUsagePlan": {
+          "Type": "AWS::ApiGateway::UsagePlan",
+          "DependsOn": "ApiGatewayDeployment1784168005805",
+          "Properties": {
+            "ApiStages": [
+              {
+                "ApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "Stage": "prod"
+              }
+            ],
+            "Description": "Usage plan for mflores-s3-extraction-functions prod stage",
+            "UsagePlanName": "mflores-s3-extraction-functions-prod"
+          }
+        },
+        "ApiGatewayUsagePlanKey1": {
+          "Type": "AWS::ApiGateway::UsagePlanKey",
+          "Properties": {
+            "KeyId": {
+              "Ref": "ApiGatewayApiKey1"
+            },
+            "KeyType": "API_KEY",
+            "UsagePlanId": {
+              "Ref": "ApiGatewayUsagePlan"
+            }
+          }
+        },
+        "S3ExtractionGatewayLambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "S3ExtractionGatewayLambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "Export": {
+            "Name": "sls-mflores-s3-extraction-functions-prod-ServerlessDeploymentBucketName"
+          }
+        },
+        "S3ExtractionGatewayLambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "S3ExtractionGatewayLambdaVersionPiLx4O7ZtoR1tahd0gXRNEUv9AuwTjNS7Uk4r6dA"
+          },
+          "Export": {
+            "Name": "sls-mflores-s3-extraction-functions-prod-S3ExtractionGatewayLambdaFunctionQualifiedArn"
+          }
+        },
+        "ServiceEndpoint": {
+          "Description": "URL of the service endpoint",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix"
+                },
+                "/prod"
+              ]
+            ]
+          },
+          "Export": {
+            "Name": "sls-mflores-s3-extraction-functions-prod-ServiceEndpoint"
+          }
+        }
+      }
+    }
+  }
+}
