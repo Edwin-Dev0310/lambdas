@@ -1,1 +1,5 @@
 .DS_Store
+./notification-overclocking/functions/.serverless/
+./notification-overclocking/iam/.serverless/
+./send-email-form-ap/functions/.serverless/
+./send-email-form-ap/iam/.serverless/

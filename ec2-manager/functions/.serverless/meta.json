@@ -1,0 +1,1055 @@
+{
+  "/Users/migueledwinflores/Projects/Lambdas/ec2-manager/functions/serverless.yml": {
+    "versionFramework": "4.43.0",
+    "servicePath": "/Users/migueledwinflores/Projects/Lambdas/ec2-manager/functions/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "mflores-ec2-manager-functions",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.12",
+        "stage": "prod",
+        "region": "us-east-1",
+        "environment": {
+          "REGION": "us-east-1",
+          "STAGE": "prod",
+          "INSTANCE_ID": "i-03ea83cb3ff698641",
+          "SECRET_PARAM": "<REDACTED>"
+        },
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "StartEc2LogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/mflores-ec2-start-prod"
+              }
+            },
+            "StopEc2LogGroup": {
+              "Type": "AWS::Logs::LogGroup",
+              "Properties": {
+                "LogGroupName": "/aws/lambda/mflores-ec2-stop-prod"
+              }
+            },
+            "StartEc2LambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                  "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+                },
+                "Handler": "handler.start_ec2",
+                "Runtime": "python3.12",
+                "FunctionName": "mflores-ec2-start-prod",
+                "MemorySize": 128,
+                "Timeout": 30,
+                "Environment": {
+                  "Variables": {
+                    "REGION": "us-east-1",
+                    "STAGE": "prod",
+                    "INSTANCE_ID": "i-03ea83cb3ff698641",
+                    "SECRET_PARAM": "<REDACTED>"
+                  }
+                },
+                "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+              },
+              "DependsOn": [
+                "StartEc2LogGroup"
+              ]
+            },
+            "StopEc2LambdaFunction": {
+              "Type": "AWS::Lambda::Function",
+              "Properties": {
+                "Code": {
+                  "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                  "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+                },
+                "Handler": "handler.stop_ec2",
+                "Runtime": "python3.12",
+                "FunctionName": "mflores-ec2-stop-prod",
+                "MemorySize": 128,
+                "Timeout": 30,
+                "Environment": {
+                  "Variables": {
+                    "REGION": "us-east-1",
+                    "STAGE": "prod",
+                    "INSTANCE_ID": "i-03ea83cb3ff698641",
+                    "SECRET_PARAM": "<REDACTED>"
+                  }
+                },
+                "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+              },
+              "DependsOn": [
+                "StopEc2LogGroup"
+              ]
+            },
+            "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "StopEc2LambdaFunction"
+                },
+                "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+              }
+            },
+            "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc": {
+              "Type": "AWS::Lambda::Version",
+              "DeletionPolicy": "Retain",
+              "Properties": {
+                "FunctionName": {
+                  "Ref": "StartEc2LambdaFunction"
+                },
+                "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+              }
+            },
+            "StopEc2EventsRuleSchedule1": {
+              "Type": "AWS::Events::Rule",
+              "Properties": {
+                "ScheduleExpression": "cron(0 3 * * ? *)",
+                "State": "ENABLED",
+                "Targets": [
+                  {
+                    "Arn": {
+                      "Fn::GetAtt": [
+                        "StopEc2LambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "Id": "stopEc2Schedule"
+                  }
+                ]
+              }
+            },
+            "StopEc2LambdaPermissionEventsRuleSchedule1": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "StopEc2LambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "events.amazonaws.com",
+                "SourceArn": {
+                  "Fn::GetAtt": [
+                    "StopEc2EventsRuleSchedule1",
+                    "Arn"
+                  ]
+                }
+              }
+            },
+            "ApiGatewayRestApi": {
+              "Type": "AWS::ApiGateway::RestApi",
+              "Properties": {
+                "Name": "prod-mflores-ec2-manager-functions",
+                "EndpointConfiguration": {
+                  "Types": [
+                    "EDGE"
+                  ]
+                },
+                "Policy": ""
+              }
+            },
+            "ApiGatewayResourceStartDashec2": {
+              "Type": "AWS::ApiGateway::Resource",
+              "Properties": {
+                "ParentId": {
+                  "Fn::GetAtt": [
+                    "ApiGatewayRestApi",
+                    "RootResourceId"
+                  ]
+                },
+                "PathPart": "start-ec2",
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                }
+              }
+            },
+            "ApiGatewayMethodStartDashec2Get": {
+              "Type": "AWS::ApiGateway::Method",
+              "Properties": {
+                "HttpMethod": "GET",
+                "RequestParameters": {},
+                "ResourceId": {
+                  "Ref": "ApiGatewayResourceStartDashec2"
+                },
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "ApiKeyRequired": "<REDACTED>",
+                "AuthorizationType": "NONE",
+                "Integration": {
+                  "IntegrationHttpMethod": "POST",
+                  "Type": "AWS_PROXY",
+                  "Uri": {
+                    "Fn::Join": [
+                      "",
+                      [
+                        "arn:",
+                        {
+                          "Ref": "AWS::Partition"
+                        },
+                        ":apigateway:",
+                        {
+                          "Ref": "AWS::Region"
+                        },
+                        ":lambda:path/2015-03-31/functions/",
+                        {
+                          "Fn::GetAtt": [
+                            "StartEc2LambdaFunction",
+                            "Arn"
+                          ]
+                        },
+                        "/invocations"
+                      ]
+                    ]
+                  }
+                },
+                "MethodResponses": []
+              },
+              "DependsOn": [
+                "StartEc2LambdaPermissionApiGateway"
+              ]
+            },
+            "ApiGatewayDeployment1790728125370": {
+              "Type": "AWS::ApiGateway::Deployment",
+              "Properties": {
+                "RestApiId": {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                "StageName": "prod"
+              },
+              "DependsOn": [
+                "ApiGatewayMethodStartDashec2Get"
+              ]
+            },
+            "StartEc2LambdaPermissionApiGateway": {
+              "Type": "AWS::Lambda::Permission",
+              "Properties": {
+                "FunctionName": {
+                  "Fn::GetAtt": [
+                    "StartEc2LambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Action": "lambda:InvokeFunction",
+                "Principal": "apigateway.amazonaws.com",
+                "SourceArn": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":execute-api:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":",
+                      {
+                        "Ref": "AWS::AccountId"
+                      },
+                      ":",
+                      {
+                        "Ref": "ApiGatewayRestApi"
+                      },
+                      "/*/*"
+                    ]
+                  ]
+                }
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "Export": {
+                "Name": "sls-mflores-ec2-manager-functions-prod-ServerlessDeploymentBucketName"
+              }
+            },
+            "StopEc2LambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0"
+              },
+              "Export": {
+                "Name": "sls-mflores-ec2-manager-functions-prod-StopEc2LambdaFunctionQualifiedArn"
+              }
+            },
+            "StartEc2LambdaFunctionQualifiedArn": {
+              "Description": "Current Lambda function version",
+              "Value": {
+                "Ref": "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc"
+              },
+              "Export": {
+                "Name": "sls-mflores-ec2-manager-functions-prod-StartEc2LambdaFunctionQualifiedArn"
+              }
+            },
+            "ServiceEndpoint": {
+              "Description": "URL of the service endpoint",
+              "Value": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "https://",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    ".execute-api.",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ".",
+                    {
+                      "Ref": "AWS::URLSuffix"
+                    },
+                    "/prod"
+                  ]
+                ]
+              },
+              "Export": {
+                "Name": "sls-mflores-ec2-manager-functions-prod-ServiceEndpoint"
+              }
+            }
+          }
+        },
+        "vpc": {}
+      },
+      "custom": {
+        "stage": "prod",
+        "my-region": "us-east-1",
+        "config": {
+          "dev": {
+            "account_id": "857285351963",
+            "memory_size": 128,
+            "instance_id": "i-03ea83cb3ff698641",
+            "secret_param": "<REDACTED>"
+          },
+          "prod": {
+            "account_id": "857285351963",
+            "memory_size": 128,
+            "instance_id": "i-03ea83cb3ff698641",
+            "secret_param": "<REDACTED>"
+          }
+        }
+      },
+      "functions": {
+        "startEc2": {
+          "name": "mflores-ec2-start-prod",
+          "handler": "handler.start_ec2",
+          "role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole",
+          "memorySize": 128,
+          "timeout": 30,
+          "events": [
+            {
+              "http": {
+                "path": "start-ec2",
+                "method": "get",
+                "integration": "AWS_PROXY"
+              }
+            }
+          ],
+          "package": {},
+          "memory": 128,
+          "runtime": "python3.12",
+          "vpc": {},
+          "versionLogicalId": "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc"
+        },
+        "stopEc2": {
+          "name": "mflores-ec2-stop-prod",
+          "handler": "handler.stop_ec2",
+          "role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole",
+          "memorySize": 128,
+          "timeout": 30,
+          "events": [
+            {
+              "schedule": {
+                "rate": [
+                  "cron(0 3 * * ? *)"
+                ],
+                "enabled": true
+              }
+            }
+          ],
+          "package": {},
+          "memory": 128,
+          "runtime": "python3.12",
+          "vpc": {},
+          "versionLogicalId": "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0"
+        }
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "environment": {
+        "REGION": "us-east-1",
+        "STAGE": "prod",
+        "INSTANCE_ID": "i-03ea83cb3ff698641",
+        "SECRET_PARAM": "<REDACTED>"
+      },
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "StartEc2LogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mflores-ec2-start-prod"
+            }
+          },
+          "StopEc2LogGroup": {
+            "Type": "AWS::Logs::LogGroup",
+            "Properties": {
+              "LogGroupName": "/aws/lambda/mflores-ec2-stop-prod"
+            }
+          },
+          "StartEc2LambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+              },
+              "Handler": "handler.start_ec2",
+              "Runtime": "python3.12",
+              "FunctionName": "mflores-ec2-start-prod",
+              "MemorySize": 128,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1",
+                  "STAGE": "prod",
+                  "INSTANCE_ID": "i-03ea83cb3ff698641",
+                  "SECRET_PARAM": "<REDACTED>"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+            },
+            "DependsOn": [
+              "StartEc2LogGroup"
+            ]
+          },
+          "StopEc2LambdaFunction": {
+            "Type": "AWS::Lambda::Function",
+            "Properties": {
+              "Code": {
+                "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+                "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+              },
+              "Handler": "handler.stop_ec2",
+              "Runtime": "python3.12",
+              "FunctionName": "mflores-ec2-stop-prod",
+              "MemorySize": 128,
+              "Timeout": 30,
+              "Environment": {
+                "Variables": {
+                  "REGION": "us-east-1",
+                  "STAGE": "prod",
+                  "INSTANCE_ID": "i-03ea83cb3ff698641",
+                  "SECRET_PARAM": "<REDACTED>"
+                }
+              },
+              "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+            },
+            "DependsOn": [
+              "StopEc2LogGroup"
+            ]
+          },
+          "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "StopEc2LambdaFunction"
+              },
+              "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+            }
+          },
+          "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc": {
+            "Type": "AWS::Lambda::Version",
+            "DeletionPolicy": "Retain",
+            "Properties": {
+              "FunctionName": {
+                "Ref": "StartEc2LambdaFunction"
+              },
+              "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+            }
+          },
+          "StopEc2EventsRuleSchedule1": {
+            "Type": "AWS::Events::Rule",
+            "Properties": {
+              "ScheduleExpression": "cron(0 3 * * ? *)",
+              "State": "ENABLED",
+              "Targets": [
+                {
+                  "Arn": {
+                    "Fn::GetAtt": [
+                      "StopEc2LambdaFunction",
+                      "Arn"
+                    ]
+                  },
+                  "Id": "stopEc2Schedule"
+                }
+              ]
+            }
+          },
+          "StopEc2LambdaPermissionEventsRuleSchedule1": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "StopEc2LambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "events.amazonaws.com",
+              "SourceArn": {
+                "Fn::GetAtt": [
+                  "StopEc2EventsRuleSchedule1",
+                  "Arn"
+                ]
+              }
+            }
+          },
+          "ApiGatewayRestApi": {
+            "Type": "AWS::ApiGateway::RestApi",
+            "Properties": {
+              "Name": "prod-mflores-ec2-manager-functions",
+              "EndpointConfiguration": {
+                "Types": [
+                  "EDGE"
+                ]
+              },
+              "Policy": ""
+            }
+          },
+          "ApiGatewayResourceStartDashec2": {
+            "Type": "AWS::ApiGateway::Resource",
+            "Properties": {
+              "ParentId": {
+                "Fn::GetAtt": [
+                  "ApiGatewayRestApi",
+                  "RootResourceId"
+                ]
+              },
+              "PathPart": "start-ec2",
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              }
+            }
+          },
+          "ApiGatewayMethodStartDashec2Get": {
+            "Type": "AWS::ApiGateway::Method",
+            "Properties": {
+              "HttpMethod": "GET",
+              "RequestParameters": {},
+              "ResourceId": {
+                "Ref": "ApiGatewayResourceStartDashec2"
+              },
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "ApiKeyRequired": "<REDACTED>",
+              "AuthorizationType": "NONE",
+              "Integration": {
+                "IntegrationHttpMethod": "POST",
+                "Type": "AWS_PROXY",
+                "Uri": {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition"
+                      },
+                      ":apigateway:",
+                      {
+                        "Ref": "AWS::Region"
+                      },
+                      ":lambda:path/2015-03-31/functions/",
+                      {
+                        "Fn::GetAtt": [
+                          "StartEc2LambdaFunction",
+                          "Arn"
+                        ]
+                      },
+                      "/invocations"
+                    ]
+                  ]
+                }
+              },
+              "MethodResponses": []
+            },
+            "DependsOn": [
+              "StartEc2LambdaPermissionApiGateway"
+            ]
+          },
+          "ApiGatewayDeployment1790728125370": {
+            "Type": "AWS::ApiGateway::Deployment",
+            "Properties": {
+              "RestApiId": {
+                "Ref": "ApiGatewayRestApi"
+              },
+              "StageName": "prod"
+            },
+            "DependsOn": [
+              "ApiGatewayMethodStartDashec2Get"
+            ]
+          },
+          "StartEc2LambdaPermissionApiGateway": {
+            "Type": "AWS::Lambda::Permission",
+            "Properties": {
+              "FunctionName": {
+                "Fn::GetAtt": [
+                  "StartEc2LambdaFunction",
+                  "Arn"
+                ]
+              },
+              "Action": "lambda:InvokeFunction",
+              "Principal": "apigateway.amazonaws.com",
+              "SourceArn": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":execute-api:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":",
+                    {
+                      "Ref": "AWS::AccountId"
+                    },
+                    ":",
+                    {
+                      "Ref": "ApiGatewayRestApi"
+                    },
+                    "/*/*"
+                  ]
+                ]
+              }
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-mflores-ec2-manager-functions-prod-ServerlessDeploymentBucketName"
+            }
+          },
+          "StopEc2LambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0"
+            },
+            "Export": {
+              "Name": "sls-mflores-ec2-manager-functions-prod-StopEc2LambdaFunctionQualifiedArn"
+            }
+          },
+          "StartEc2LambdaFunctionQualifiedArn": {
+            "Description": "Current Lambda function version",
+            "Value": {
+              "Ref": "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc"
+            },
+            "Export": {
+              "Name": "sls-mflores-ec2-manager-functions-prod-StartEc2LambdaFunctionQualifiedArn"
+            }
+          },
+          "ServiceEndpoint": {
+            "Description": "URL of the service endpoint",
+            "Value": {
+              "Fn::Join": [
+                "",
+                [
+                  "https://",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  ".execute-api.",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ".",
+                  {
+                    "Ref": "AWS::URLSuffix"
+                  },
+                  "/prod"
+                ]
+              ]
+            },
+            "Export": {
+              "Name": "sls-mflores-ec2-manager-functions-prod-ServiceEndpoint"
+            }
+          }
+        }
+      },
+      "vpc": {}
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: mflores-ec2-manager-functions\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n    STAGE: ${self:custom.stage}\n    INSTANCE_ID: ${self:custom.config.${self:custom.stage}.instance_id}\n    SECRET_PARAM: ${self:custom.config.${self:custom.stage}.secret_param}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    dev:\n      account_id: \"857285351963\"\n      memory_size: 128\n      # Reemplaza con el ID de tu EC2\n      instance_id: \"i-03ea83cb3ff698641\"\n      # Parámetro esperado en el endpoint\n      secret_param: \"4f9b2d3c1a8e7f6d5c4b3a2910874563\"\n    prod:\n      account_id: \"857285351963\"\n      memory_size: 128\n      instance_id: \"i-03ea83cb3ff698641\"\n      secret_param: \"4f9b2d3c1a8e7f6d5c4b3a2910874563\"\n\nfunctions:\n  startEc2:\n    name: mflores-ec2-start-${self:custom.stage}\n    handler: handler.start_ec2\n    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaEC2ManagerRole\n    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}\n    timeout: 30\n    events:\n      - http:\n          path: start-ec2\n          method: get\n\n  stopEc2:\n    name: mflores-ec2-stop-${self:custom.stage}\n    handler: handler.stop_ec2\n    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaEC2ManagerRole\n    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}\n    timeout: 30\n    events:\n      - schedule:\n          # Para apagar a las 9pm (21:00) hora del centro de México (UTC-6) -> 03:00 UTC\n          rate: cron(0 3 * * ? *)\n          enabled: true\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "prod"
+    },
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "857285351963",
+    "serviceProviderAwsCfStackName": "mflores-ec2-manager-functions-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:857285351963:stack/mflores-ec2-manager-functions-prod/eb833780-bc65-11f1-868d-0afff13c60db",
+    "serviceProviderAwsCfStackCreated": "2026-09-30T00:28:55.501Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "StopEc2LambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:857285351963:function:mflores-ec2-stop-prod:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-mflores-ec2-manager-functions-prod-StopEc2LambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "StartEc2LambdaFunctionQualifiedArn",
+        "OutputValue": "arn:aws:lambda:us-east-1:857285351963:function:mflores-ec2-start-prod:2",
+        "Description": "Current Lambda function version",
+        "ExportName": "sls-mflores-ec2-manager-functions-prod-StartEc2LambdaFunctionQualifiedArn"
+      },
+      {
+        "OutputKey": "ServiceEndpoint",
+        "OutputValue": "https://dhl8sphe49.execute-api.us-east-1.amazonaws.com/prod",
+        "Description": "URL of the service endpoint",
+        "ExportName": "sls-mflores-ec2-manager-functions-prod-ServiceEndpoint"
+      },
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+        "ExportName": "sls-mflores-ec2-manager-functions-prod-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "StartEc2LogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/mflores-ec2-start-prod"
+          }
+        },
+        "StopEc2LogGroup": {
+          "Type": "AWS::Logs::LogGroup",
+          "Properties": {
+            "LogGroupName": "/aws/lambda/mflores-ec2-stop-prod"
+          }
+        },
+        "StartEc2LambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+            },
+            "Handler": "handler.start_ec2",
+            "Runtime": "python3.12",
+            "FunctionName": "mflores-ec2-start-prod",
+            "MemorySize": 128,
+            "Timeout": 30,
+            "Environment": {
+              "Variables": {
+                "REGION": "us-east-1",
+                "STAGE": "prod",
+                "INSTANCE_ID": "i-03ea83cb3ff698641",
+                "SECRET_PARAM": "<REDACTED>"
+              }
+            },
+            "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+          },
+          "DependsOn": [
+            "StartEc2LogGroup"
+          ]
+        },
+        "StopEc2LambdaFunction": {
+          "Type": "AWS::Lambda::Function",
+          "Properties": {
+            "Code": {
+              "S3Bucket": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "S3Key": "serverless/mflores-ec2-manager-functions/prod/1790728129788-2026-09-30T00:28:49.788Z/mflores-ec2-manager-functions.zip"
+            },
+            "Handler": "handler.stop_ec2",
+            "Runtime": "python3.12",
+            "FunctionName": "mflores-ec2-stop-prod",
+            "MemorySize": 128,
+            "Timeout": 30,
+            "Environment": {
+              "Variables": {
+                "REGION": "us-east-1",
+                "STAGE": "prod",
+                "INSTANCE_ID": "i-03ea83cb3ff698641",
+                "SECRET_PARAM": "<REDACTED>"
+              }
+            },
+            "Role": "arn:aws:iam::857285351963:role/LambdaEC2ManagerRole"
+          },
+          "DependsOn": [
+            "StopEc2LogGroup"
+          ]
+        },
+        "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "StopEc2LambdaFunction"
+            },
+            "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+          }
+        },
+        "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc": {
+          "Type": "AWS::Lambda::Version",
+          "DeletionPolicy": "Retain",
+          "Properties": {
+            "FunctionName": {
+              "Ref": "StartEc2LambdaFunction"
+            },
+            "CodeSha256": "DzVgQSnCB4VGfVyz2Xq4pmDLRAnZVlov/IQA9CP9UEo="
+          }
+        },
+        "StopEc2EventsRuleSchedule1": {
+          "Type": "AWS::Events::Rule",
+          "Properties": {
+            "ScheduleExpression": "cron(0 3 * * ? *)",
+            "State": "ENABLED",
+            "Targets": [
+              {
+                "Arn": {
+                  "Fn::GetAtt": [
+                    "StopEc2LambdaFunction",
+                    "Arn"
+                  ]
+                },
+                "Id": "stopEc2Schedule"
+              }
+            ]
+          }
+        },
+        "StopEc2LambdaPermissionEventsRuleSchedule1": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "StopEc2LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "events.amazonaws.com",
+            "SourceArn": {
+              "Fn::GetAtt": [
+                "StopEc2EventsRuleSchedule1",
+                "Arn"
+              ]
+            }
+          }
+        },
+        "ApiGatewayRestApi": {
+          "Type": "AWS::ApiGateway::RestApi",
+          "Properties": {
+            "Name": "prod-mflores-ec2-manager-functions",
+            "EndpointConfiguration": {
+              "Types": [
+                "EDGE"
+              ]
+            },
+            "Policy": ""
+          }
+        },
+        "ApiGatewayResourceStartDashec2": {
+          "Type": "AWS::ApiGateway::Resource",
+          "Properties": {
+            "ParentId": {
+              "Fn::GetAtt": [
+                "ApiGatewayRestApi",
+                "RootResourceId"
+              ]
+            },
+            "PathPart": "start-ec2",
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            }
+          }
+        },
+        "ApiGatewayMethodStartDashec2Get": {
+          "Type": "AWS::ApiGateway::Method",
+          "Properties": {
+            "HttpMethod": "GET",
+            "RequestParameters": {},
+            "ResourceId": {
+              "Ref": "ApiGatewayResourceStartDashec2"
+            },
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "ApiKeyRequired": "<REDACTED>",
+            "AuthorizationType": "NONE",
+            "Integration": {
+              "IntegrationHttpMethod": "POST",
+              "Type": "AWS_PROXY",
+              "Uri": {
+                "Fn::Join": [
+                  "",
+                  [
+                    "arn:",
+                    {
+                      "Ref": "AWS::Partition"
+                    },
+                    ":apigateway:",
+                    {
+                      "Ref": "AWS::Region"
+                    },
+                    ":lambda:path/2015-03-31/functions/",
+                    {
+                      "Fn::GetAtt": [
+                        "StartEc2LambdaFunction",
+                        "Arn"
+                      ]
+                    },
+                    "/invocations"
+                  ]
+                ]
+              }
+            },
+            "MethodResponses": []
+          },
+          "DependsOn": [
+            "StartEc2LambdaPermissionApiGateway"
+          ]
+        },
+        "ApiGatewayDeployment1790728125370": {
+          "Type": "AWS::ApiGateway::Deployment",
+          "Properties": {
+            "RestApiId": {
+              "Ref": "ApiGatewayRestApi"
+            },
+            "StageName": "prod"
+          },
+          "DependsOn": [
+            "ApiGatewayMethodStartDashec2Get"
+          ]
+        },
+        "StartEc2LambdaPermissionApiGateway": {
+          "Type": "AWS::Lambda::Permission",
+          "Properties": {
+            "FunctionName": {
+              "Fn::GetAtt": [
+                "StartEc2LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Action": "lambda:InvokeFunction",
+            "Principal": "apigateway.amazonaws.com",
+            "SourceArn": {
+              "Fn::Join": [
+                "",
+                [
+                  "arn:",
+                  {
+                    "Ref": "AWS::Partition"
+                  },
+                  ":execute-api:",
+                  {
+                    "Ref": "AWS::Region"
+                  },
+                  ":",
+                  {
+                    "Ref": "AWS::AccountId"
+                  },
+                  ":",
+                  {
+                    "Ref": "ApiGatewayRestApi"
+                  },
+                  "/*/*"
+                ]
+              ]
+            }
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "Export": {
+            "Name": "sls-mflores-ec2-manager-functions-prod-ServerlessDeploymentBucketName"
+          }
+        },
+        "StopEc2LambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "StopEc2LambdaVersion03qKBdoJhxkiV6HDzfsThnTdhMTXeWIEr5xxbUkfy0"
+          },
+          "Export": {
+            "Name": "sls-mflores-ec2-manager-functions-prod-StopEc2LambdaFunctionQualifiedArn"
+          }
+        },
+        "StartEc2LambdaFunctionQualifiedArn": {
+          "Description": "Current Lambda function version",
+          "Value": {
+            "Ref": "StartEc2LambdaVersionNU8UHDwbHNrTjOCEP0yZm84fIrE5qfM6XWMZpXc"
+          },
+          "Export": {
+            "Name": "sls-mflores-ec2-manager-functions-prod-StartEc2LambdaFunctionQualifiedArn"
+          }
+        },
+        "ServiceEndpoint": {
+          "Description": "URL of the service endpoint",
+          "Value": {
+            "Fn::Join": [
+              "",
+              [
+                "https://",
+                {
+                  "Ref": "ApiGatewayRestApi"
+                },
+                ".execute-api.",
+                {
+                  "Ref": "AWS::Region"
+                },
+                ".",
+                {
+                  "Ref": "AWS::URLSuffix"
+                },
+                "/prod"
+              ]
+            ]
+          },
+          "Export": {
+            "Name": "sls-mflores-ec2-manager-functions-prod-ServiceEndpoint"
+          }
+        }
+      }
+    }
+  }
+}

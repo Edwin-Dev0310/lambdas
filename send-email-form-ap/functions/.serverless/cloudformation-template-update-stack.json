@@ -1,0 +1,226 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "SendEmailFormAPLogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/mflores-send-form-ap-functions-prod-sendEmailFormAP"
+      }
+    },
+    "SendEmailFormAPLambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-west-1-1ca3b6dc-8883",
+          "S3Key": "serverless/mflores-send-form-ap-functions/prod/1791334417304-2026-10-07T00:53:37.304Z/mflores-send-form-ap-functions.zip"
+        },
+        "Handler": "handler.send_email",
+        "Runtime": "python3.12",
+        "FunctionName": "mflores-send-form-ap-functions-prod-sendEmailFormAP",
+        "MemorySize": 1024,
+        "Timeout": 6,
+        "Tags": [
+          {
+            "Key": "dev",
+            "Value": "mflores"
+          },
+          {
+            "Key": "project-name",
+            "Value": "form-ap"
+          },
+          {
+            "Key": "env",
+            "Value": "prod"
+          }
+        ],
+        "Environment": {
+          "Variables": {
+            "REGION": "us-west-1",
+            "STAGE": "prod",
+            "DESTINATION_EMAIL": "info@ammper.com",
+            "SENDER_EMAIL": "digital@ammperpower.com"
+          }
+        },
+        "Role": "arn:aws:iam::625424230476:role/LambdaSendEmailFormAPRole"
+      },
+      "DependsOn": [
+        "SendEmailFormAPLogGroup"
+      ]
+    },
+    "SendEmailFormAPLambdaVersionaL7N9FTs4KZZYiPB6784iiVBN0tb67ZsMARSP6Szw": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "SendEmailFormAPLambdaFunction"
+        },
+        "CodeSha256": "kZ8LdZjtwe1uxRPs9iMrsrt7cXuw22JyvUbhJp7SaEQ="
+      }
+    },
+    "HttpApi": {
+      "Type": "AWS::ApiGatewayV2::Api",
+      "Properties": {
+        "Name": "prod-mflores-send-form-ap-functions",
+        "ProtocolType": "HTTP",
+        "CorsConfiguration": {
+          "AllowHeaders": [
+            "Content-Type",
+            "X-Amz-Date",
+            "Authorization",
+            "X-Api-Key",
+            "X-Amz-Security-Token",
+            "X-Amz-User-Agent",
+            "X-Amzn-Trace-Id"
+          ],
+          "AllowMethods": [
+            "OPTIONS",
+            "POST"
+          ],
+          "AllowOrigins": [
+            "*"
+          ]
+        }
+      }
+    },
+    "HttpApiStage": {
+      "Type": "AWS::ApiGatewayV2::Stage",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "StageName": "$default",
+        "AutoDeploy": true,
+        "DefaultRouteSettings": {
+          "DetailedMetricsEnabled": false
+        }
+      }
+    },
+    "SendEmailFormAPLambdaPermissionHttpApi": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "SendEmailFormAPLambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "apigateway.amazonaws.com",
+        "SourceArn": {
+          "Fn::Join": [
+            "",
+            [
+              "arn:",
+              {
+                "Ref": "AWS::Partition"
+              },
+              ":execute-api:",
+              {
+                "Ref": "AWS::Region"
+              },
+              ":",
+              {
+                "Ref": "AWS::AccountId"
+              },
+              ":",
+              {
+                "Ref": "HttpApi"
+              },
+              "/*"
+            ]
+          ]
+        }
+      }
+    },
+    "HttpApiIntegrationSendEmailFormAP": {
+      "Type": "AWS::ApiGatewayV2::Integration",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "IntegrationType": "AWS_PROXY",
+        "IntegrationUri": {
+          "Fn::GetAtt": [
+            "SendEmailFormAPLambdaFunction",
+            "Arn"
+          ]
+        },
+        "PayloadFormatVersion": "2.0",
+        "TimeoutInMillis": 30000
+      }
+    },
+    "HttpApiRoutePostSendDashemailDashap": {
+      "Type": "AWS::ApiGatewayV2::Route",
+      "Properties": {
+        "ApiId": {
+          "Ref": "HttpApi"
+        },
+        "RouteKey": "POST /send-email-ap",
+        "Target": {
+          "Fn::Join": [
+            "/",
+            [
+              "integrations",
+              {
+                "Ref": "HttpApiIntegrationSendEmailFormAP"
+              }
+            ]
+          ]
+        }
+      },
+      "DependsOn": "HttpApiIntegrationSendEmailFormAP"
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-west-1-1ca3b6dc-8883",
+      "Export": {
+        "Name": "sls-mflores-send-form-ap-functions-prod-ServerlessDeploymentBucketName"
+      }
+    },
+    "SendEmailFormAPLambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "SendEmailFormAPLambdaVersionaL7N9FTs4KZZYiPB6784iiVBN0tb67ZsMARSP6Szw"
+      },
+      "Export": {
+        "Name": "sls-mflores-send-form-ap-functions-prod-SendEmailFormAPLambdaFunctionQualifiedArn"
+      }
+    },
+    "HttpApiId": {
+      "Description": "Id of the HTTP API",
+      "Value": {
+        "Ref": "HttpApi"
+      },
+      "Export": {
+        "Name": "sls-mflores-send-form-ap-functions-prod-HttpApiId"
+      }
+    },
+    "HttpApiUrl": {
+      "Description": "URL of the HTTP API",
+      "Value": {
+        "Fn::Join": [
+          "",
+          [
+            "https://",
+            {
+              "Ref": "HttpApi"
+            },
+            ".execute-api.",
+            {
+              "Ref": "AWS::Region"
+            },
+            ".",
+            {
+              "Ref": "AWS::URLSuffix"
+            }
+          ]
+        ]
+      },
+      "Export": {
+        "Name": "sls-mflores-send-form-ap-functions-prod-HttpApiUrl"
+      }
+    }
+  }
+}

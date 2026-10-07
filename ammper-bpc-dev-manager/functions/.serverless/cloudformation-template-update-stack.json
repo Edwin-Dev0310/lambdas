@@ -1,0 +1,188 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "The AWS CloudFormation template for this Serverless application",
+  "Resources": {
+    "StartEc2LogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/ammper-bpc-dev-manager-start-prod"
+      }
+    },
+    "StopEc2LogGroup": {
+      "Type": "AWS::Logs::LogGroup",
+      "Properties": {
+        "LogGroupName": "/aws/lambda/ammper-bpc-dev-manager-stop-prod"
+      }
+    },
+    "StartEc2LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-c5effedd-c068",
+          "S3Key": "serverless/ammper-bpc-dev-manager-functions/prod/1791225567269-2026-10-05T18:39:27.269Z/ammper-bpc-dev-manager-functions.zip"
+        },
+        "Handler": "handler.start_ec2",
+        "Runtime": "python3.12",
+        "FunctionName": "ammper-bpc-dev-manager-start-prod",
+        "MemorySize": 128,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "REGION": "us-east-1",
+            "STAGE": "prod",
+            "INSTANCE_ID": "i-070be5a7f38a8714d"
+          }
+        },
+        "Role": "arn:aws:iam::130871271678:role/AmmperBpcDevManagerRole"
+      },
+      "DependsOn": [
+        "StartEc2LogGroup"
+      ]
+    },
+    "StopEc2LambdaFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "S3Bucket": "serverless-framework-deployments-us-east-1-c5effedd-c068",
+          "S3Key": "serverless/ammper-bpc-dev-manager-functions/prod/1791225567269-2026-10-05T18:39:27.269Z/ammper-bpc-dev-manager-functions.zip"
+        },
+        "Handler": "handler.stop_ec2",
+        "Runtime": "python3.12",
+        "FunctionName": "ammper-bpc-dev-manager-stop-prod",
+        "MemorySize": 128,
+        "Timeout": 30,
+        "Environment": {
+          "Variables": {
+            "REGION": "us-east-1",
+            "STAGE": "prod",
+            "INSTANCE_ID": "i-070be5a7f38a8714d"
+          }
+        },
+        "Role": "arn:aws:iam::130871271678:role/AmmperBpcDevManagerRole"
+      },
+      "DependsOn": [
+        "StopEc2LogGroup"
+      ]
+    },
+    "StopEc2LambdaVersionfAFfFx4ilAPy80C7HIumeT6nmjGBDwap6IYPi2weII": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "StopEc2LambdaFunction"
+        },
+        "CodeSha256": "LLvHixo/vEHNrv0abcLS+htTQGY3+m922d27kfnyFoE="
+      }
+    },
+    "StartEc2LambdaVersion25w7LXzdW1KfAJ0TzYNoVI3lULYtgQ7h1aT9R2D3s3c": {
+      "Type": "AWS::Lambda::Version",
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "FunctionName": {
+          "Ref": "StartEc2LambdaFunction"
+        },
+        "CodeSha256": "LLvHixo/vEHNrv0abcLS+htTQGY3+m922d27kfnyFoE="
+      }
+    },
+    "StartEc2EventsRuleSchedule1": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "cron(45 18 ? * MON-FRI *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "StartEc2LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "startEc2Schedule"
+          }
+        ]
+      }
+    },
+    "StartEc2LambdaPermissionEventsRuleSchedule1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "StartEc2LambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "StartEc2EventsRuleSchedule1",
+            "Arn"
+          ]
+        }
+      }
+    },
+    "StopEc2EventsRuleSchedule1": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "ScheduleExpression": "cron(15 1 ? * TUE-SAT *)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Arn": {
+              "Fn::GetAtt": [
+                "StopEc2LambdaFunction",
+                "Arn"
+              ]
+            },
+            "Id": "stopEc2Schedule"
+          }
+        ]
+      }
+    },
+    "StopEc2LambdaPermissionEventsRuleSchedule1": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": {
+          "Fn::GetAtt": [
+            "StopEc2LambdaFunction",
+            "Arn"
+          ]
+        },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": {
+          "Fn::GetAtt": [
+            "StopEc2EventsRuleSchedule1",
+            "Arn"
+          ]
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ServerlessDeploymentBucketName": {
+      "Value": "serverless-framework-deployments-us-east-1-c5effedd-c068",
+      "Export": {
+        "Name": "sls-ammper-bpc-dev-manager-functions-prod-ServerlessDeploymentBucketName"
+      }
+    },
+    "StopEc2LambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "StopEc2LambdaVersionfAFfFx4ilAPy80C7HIumeT6nmjGBDwap6IYPi2weII"
+      },
+      "Export": {
+        "Name": "sls-ammper-bpc-dev-manager-functions-prod-StopEc2LambdaFunctionQualifiedArn"
+      }
+    },
+    "StartEc2LambdaFunctionQualifiedArn": {
+      "Description": "Current Lambda function version",
+      "Value": {
+        "Ref": "StartEc2LambdaVersion25w7LXzdW1KfAJ0TzYNoVI3lULYtgQ7h1aT9R2D3s3c"
+      },
+      "Export": {
+        "Name": "sls-ammper-bpc-dev-manager-functions-prod-StartEc2LambdaFunctionQualifiedArn"
+      }
+    }
+  }
+}

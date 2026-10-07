@@ -1,0 +1,332 @@
+{
+  "/Users/migueledwinflores/Projects/Lambdas/ec2-manager/iam/serverless.yml": {
+    "versionFramework": "4.43.0",
+    "servicePath": "/Users/migueledwinflores/Projects/Lambdas/ec2-manager/iam/serverless.yml",
+    "serviceConfigFileName": "serverless.yml",
+    "service": {
+      "service": "mflores-ec2-manager-role",
+      "provider": {
+        "name": "aws",
+        "runtime": "python3.12",
+        "stage": "prod",
+        "region": "us-east-1",
+        "versionFunctions": true,
+        "compiledCloudFormationTemplate": {
+          "AWSTemplateFormatVersion": "2010-09-09",
+          "Description": "The AWS CloudFormation template for this Serverless application",
+          "Resources": {
+            "LambdaEC2ManagerRole": {
+              "Type": "AWS::IAM::Role",
+              "Properties": {
+                "RoleName": "LambdaEC2ManagerRole",
+                "AssumeRolePolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Principal": {
+                        "Service": "lambda.amazonaws.com"
+                      },
+                      "Action": [
+                        "sts:AssumeRole"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            "LambdaEC2ManagerPolicy": {
+              "Type": "AWS::IAM::Policy",
+              "Properties": {
+                "PolicyName": "LambdaEC2ManagerPolicy",
+                "PolicyDocument": {
+                  "Version": "2012-10-17",
+                  "Statement": [
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "logs:CreateLogGroup",
+                        "logs:CreateLogStream",
+                        "logs:PutLogEvents"
+                      ],
+                      "Resource": "arn:aws:logs:*:*:*"
+                    },
+                    {
+                      "Effect": "Allow",
+                      "Action": [
+                        "ec2:StartInstances",
+                        "ec2:StopInstances",
+                        "ec2:DescribeInstances"
+                      ],
+                      "Resource": "*"
+                    }
+                  ]
+                },
+                "Roles": [
+                  {
+                    "Ref": "LambdaEC2ManagerRole"
+                  }
+                ]
+              }
+            }
+          },
+          "Outputs": {
+            "ServerlessDeploymentBucketName": {
+              "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+              "Export": {
+                "Name": "sls-mflores-ec2-manager-role-prod-ServerlessDeploymentBucketName"
+              }
+            }
+          }
+        }
+      },
+      "custom": {
+        "stage": "prod",
+        "my-region": "us-east-1",
+        "config": {
+          "dev": {
+            "account_id": "857285351963"
+          },
+          "prod": {
+            "account_id": "857285351963"
+          }
+        }
+      },
+      "resources": {
+        "Resources": {
+          "LambdaEC2ManagerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "LambdaEC2ManagerRole",
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "LambdaEC2ManagerPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+              "PolicyName": "LambdaEC2ManagerPolicy",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                    ],
+                    "Resource": "arn:aws:logs:*:*:*"
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "ec2:StartInstances",
+                      "ec2:StopInstances",
+                      "ec2:DescribeInstances"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              },
+              "Roles": [
+                {
+                  "Ref": "LambdaEC2ManagerRole"
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {}
+      }
+    },
+    "provider": {
+      "name": "aws",
+      "runtime": "python3.12",
+      "stage": "prod",
+      "region": "us-east-1",
+      "versionFunctions": true,
+      "compiledCloudFormationTemplate": {
+        "AWSTemplateFormatVersion": "2010-09-09",
+        "Description": "The AWS CloudFormation template for this Serverless application",
+        "Resources": {
+          "LambdaEC2ManagerRole": {
+            "Type": "AWS::IAM::Role",
+            "Properties": {
+              "RoleName": "LambdaEC2ManagerRole",
+              "AssumeRolePolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Principal": {
+                      "Service": "lambda.amazonaws.com"
+                    },
+                    "Action": [
+                      "sts:AssumeRole"
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          "LambdaEC2ManagerPolicy": {
+            "Type": "AWS::IAM::Policy",
+            "Properties": {
+              "PolicyName": "LambdaEC2ManagerPolicy",
+              "PolicyDocument": {
+                "Version": "2012-10-17",
+                "Statement": [
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "logs:CreateLogGroup",
+                      "logs:CreateLogStream",
+                      "logs:PutLogEvents"
+                    ],
+                    "Resource": "arn:aws:logs:*:*:*"
+                  },
+                  {
+                    "Effect": "Allow",
+                    "Action": [
+                      "ec2:StartInstances",
+                      "ec2:StopInstances",
+                      "ec2:DescribeInstances"
+                    ],
+                    "Resource": "*"
+                  }
+                ]
+              },
+              "Roles": [
+                {
+                  "Ref": "LambdaEC2ManagerRole"
+                }
+              ]
+            }
+          }
+        },
+        "Outputs": {
+          "ServerlessDeploymentBucketName": {
+            "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+            "Export": {
+              "Name": "sls-mflores-ec2-manager-role-prod-ServerlessDeploymentBucketName"
+            }
+          }
+        }
+      }
+    },
+    "dashboard": {
+      "isEnabledForService": false,
+      "requiredAuthentication": false,
+      "orgFeaturesInUse": null,
+      "orgObservabilityIntegrations": null,
+      "serviceAppId": null,
+      "serviceProvider": null,
+      "instanceParameters": null
+    },
+    "serviceRawFile": "service: mflores-ec2-manager-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    dev:\n      account_id: '857285351963'\n    prod:\n      account_id: '857285351963'\n\nresources:\n  - ${file(roles.yml)}\n  - ${file(policies.yml)}\n",
+    "command": [
+      "deploy"
+    ],
+    "options": {
+      "stage": "prod"
+    },
+    "orgId": "ee782354-2e17-4e04-9608-de502f702636",
+    "orgName": "devtest03",
+    "userId": "lMl2CLdDf5v74tWNWq",
+    "userName": "devtest03",
+    "serviceProviderAwsAccountId": "857285351963",
+    "serviceProviderAwsCfStackName": "mflores-ec2-manager-role-prod",
+    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:857285351963:stack/mflores-ec2-manager-role-prod/e48033a0-bc62-11f1-86f3-0effd807e39b",
+    "serviceProviderAwsCfStackCreated": "2026-09-30T00:07:15.242Z",
+    "serviceProviderAwsCfStackUpdated": null,
+    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
+    "serviceProviderAwsCfStackOutputs": [
+      {
+        "OutputKey": "ServerlessDeploymentBucketName",
+        "OutputValue": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+        "ExportName": "sls-mflores-ec2-manager-role-prod-ServerlessDeploymentBucketName"
+      }
+    ],
+    "compiledCloudFormationTemplate": {
+      "AWSTemplateFormatVersion": "2010-09-09",
+      "Description": "The AWS CloudFormation template for this Serverless application",
+      "Resources": {
+        "LambdaEC2ManagerRole": {
+          "Type": "AWS::IAM::Role",
+          "Properties": {
+            "RoleName": "LambdaEC2ManagerRole",
+            "AssumeRolePolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Principal": {
+                    "Service": "lambda.amazonaws.com"
+                  },
+                  "Action": [
+                    "sts:AssumeRole"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "LambdaEC2ManagerPolicy": {
+          "Type": "AWS::IAM::Policy",
+          "Properties": {
+            "PolicyName": "LambdaEC2ManagerPolicy",
+            "PolicyDocument": {
+              "Version": "2012-10-17",
+              "Statement": [
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ],
+                  "Resource": "arn:aws:logs:*:*:*"
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "ec2:StartInstances",
+                    "ec2:StopInstances",
+                    "ec2:DescribeInstances"
+                  ],
+                  "Resource": "*"
+                }
+              ]
+            },
+            "Roles": [
+              {
+                "Ref": "LambdaEC2ManagerRole"
+              }
+            ]
+          }
+        }
+      },
+      "Outputs": {
+        "ServerlessDeploymentBucketName": {
+          "Value": "serverless-framework-deployments-us-east-1-5804d545-76c0",
+          "Export": {
+            "Name": "sls-mflores-ec2-manager-role-prod-ServerlessDeploymentBucketName"
+          }
+        }
+      }
+    }
+  }
+}

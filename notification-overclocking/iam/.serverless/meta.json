@@ -1,6 +1,6 @@
 {
   "/Users/migueledwinflores/Proyects/Lambdas/notification-overclocking/iam/serverless.yml": {
-    "versionFramework": "4.39.0",
+    "versionFramework": "4.40.0",
     "servicePath": "/Users/migueledwinflores/Proyects/Lambdas/notification-overclocking/iam/serverless.yml",
     "serviceConfigFileName": "serverless.yml",
     "service": {
@@ -8,7 +8,7 @@
       "provider": {
         "name": "aws",
         "runtime": "python3.12",
-        "stage": "prod",
+        "stage": "dev",
         "region": "us-east-1",
         "environment": {
           "REGION": "us-east-1"
@@ -61,7 +61,7 @@
                         "s3:GetBucketLocation"
                       ],
                       "Resource": [
-                        "arn:aws:s3:::insumos-artemis-dev"
+                        "arn:aws:s3:::test-edwin-notificaciones"
                       ]
                     },
                     {
@@ -70,7 +70,7 @@
                         "s3:GetObject"
                       ],
                       "Resource": [
-                        "arn:aws:s3:::insumos-artemis-dev/*"
+                        "arn:aws:s3:::test-edwin-notificaciones/*"
                       ]
                     },
                     {
@@ -90,14 +90,14 @@
             "ServerlessDeploymentBucketName": {
               "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
               "Export": {
-                "Name": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
+                "Name": "sls-mflores-notification-overclocking-role-dev-ServerlessDeploymentBucketName"
               }
             }
           }
         }
       },
       "custom": {
-        "stage": "prod",
+        "stage": "dev",
         "my-region": "us-east-1",
         "config": {
           "dev": {
@@ -155,7 +155,7 @@
                       "s3:GetBucketLocation"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev"
+                      "arn:aws:s3:::test-edwin-notificaciones"
                     ]
                   },
                   {
@@ -164,7 +164,7 @@
                       "s3:GetObject"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev/*"
+                      "arn:aws:s3:::test-edwin-notificaciones/*"
                     ]
                   },
                   {
@@ -186,7 +186,7 @@
     "provider": {
       "name": "aws",
       "runtime": "python3.12",
-      "stage": "prod",
+      "stage": "dev",
       "region": "us-east-1",
       "environment": {
         "REGION": "us-east-1"
@@ -239,7 +239,7 @@
                       "s3:GetBucketLocation"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev"
+                      "arn:aws:s3:::test-edwin-notificaciones"
                     ]
                   },
                   {
@@ -248,7 +248,7 @@
                       "s3:GetObject"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev/*"
+                      "arn:aws:s3:::test-edwin-notificaciones/*"
                     ]
                   },
                   {
@@ -268,7 +268,7 @@
           "ServerlessDeploymentBucketName": {
             "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
             "Export": {
-              "Name": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
+              "Name": "sls-mflores-notification-overclocking-role-dev-ServerlessDeploymentBucketName"
             }
           }
         }
@@ -283,110 +283,27 @@
       "serviceProvider": null,
       "instanceParameters": null
     },
+    "error": {
+      "message": "An error occurred: LambdaNotificationOverclockingPolicy - Resource handler returned message: \"A policy called LambdaNotificationOverclockingPolicy already exists. Duplicate names are not allowed. (Service: Iam, Status Code: 409, Request ID: b259b286-19cc-46df-ae97-ce2ce3fca733) (SDK Attempt Count: 1)\" (RequestToken: d55d0332-86b9-23d9-9350-f2f49011718b, HandlerErrorCode: AlreadyExists).",
+      "stack": "ServerlessError2: An error occurred: LambdaNotificationOverclockingPolicy - Resource handler returned message: \"A policy called LambdaNotificationOverclockingPolicy already exists. Duplicate names are not allowed. (Service: Iam, Status Code: 409, Request ID: b259b286-19cc-46df-ae97-ce2ce3fca733) (SDK Attempt Count: 1)\" (RequestToken: d55d0332-86b9-23d9-9350-f2f49011718b, HandlerErrorCode: AlreadyExists).\n    at file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:1814:828\n    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)\n    at async AwsDeploy.createFallback (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:1814:33822)\n    at async aws:deploy:deploy:updateStack (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:1827:8199)\n    at async PluginManager.runHooks (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:11229)\n    at async PluginManager.invoke (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:12033)\n    at async PluginManager.spawn (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:12539)\n    at async PluginManager.runHooks (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:11229)\n    at async PluginManager.invoke (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:12033)\n    at async PluginManager.run (file:///Users/migueledwinflores/.serverless/releases/4.40.0/package/dist/sf-core.js:2390:12871)",
+      "code": "AWS_CLOUD_FORMATION_CREATE_STACK_INTERNAL_I_A_M_MANAGED_POLICY_CREATE_FAILED"
+    },
     "serviceRawFile": "service: mflores-notification-overclocking-role\n\nprovider:\n  name: aws\n  runtime: python3.12\n  stage: ${self:custom.stage}\n  region: ${self:custom.my-region}\n  environment:\n    REGION: ${self:provider.region}\n\ncustom:\n  stage: ${opt:stage, 'dev'}\n  my-region: ${opt:region, 'us-east-1'}\n  config:\n    dev:\n      account_id: '587992493393'\n      bucket_name: test-edwin-notificaciones\n    prod:\n      account_id: '587992493393'\n      bucket_name: insumos-artemis-dev\n\nresources:\n- ${file(roles.yml)}\n- ${file(policies.yml)}\n",
     "command": [
       "deploy"
     ],
     "options": {
-      "stage": "prod"
+      "stage": "dev"
     },
     "orgId": "ee782354-2e17-4e04-9608-de502f702636",
     "orgName": "devtest03",
     "userId": "lMl2CLdDf5v74tWNWq",
     "userName": "devtest03",
     "serviceProviderAwsAccountId": "587992493393",
-    "serviceProviderAwsCfStackName": "mflores-notification-overclocking-role-prod",
-    "serviceProviderAwsCfStackId": "arn:aws:cloudformation:us-east-1:587992493393:stack/mflores-notification-overclocking-role-prod/eea5d0b0-7c9d-11f1-885d-0affe65e9d09",
-    "serviceProviderAwsCfStackCreated": "2026-07-10T20:28:38.226Z",
+    "serviceProviderAwsCfStackId": null,
+    "serviceProviderAwsCfStackCreated": null,
     "serviceProviderAwsCfStackUpdated": null,
-    "serviceProviderAwsCfStackStatus": "CREATE_COMPLETE",
-    "serviceProviderAwsCfStackOutputs": [
-      {
-        "OutputKey": "ServerlessDeploymentBucketName",
-        "OutputValue": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
-        "ExportName": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
-      }
-    ],
-    "compiledCloudFormationTemplate": {
-      "AWSTemplateFormatVersion": "2010-09-09",
-      "Description": "The AWS CloudFormation template for this Serverless application",
-      "Resources": {
-        "LambdaNotificationOverclockingRole": {
-          "Type": "AWS::IAM::Role",
-          "Properties": {
-            "RoleName": "LambdaNotificationOverclockingRole",
-            "MaxSessionDuration": 3600,
-            "AssumeRolePolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Principal": {
-                    "Service": "lambda.amazonaws.com"
-                  },
-                  "Action": [
-                    "sts:AssumeRole"
-                  ]
-                }
-              ]
-            },
-            "ManagedPolicyArns": [
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-              {
-                "Ref": "LambdaNotificationOverclockingPolicy"
-              }
-            ]
-          }
-        },
-        "LambdaNotificationOverclockingPolicy": {
-          "Type": "AWS::IAM::ManagedPolicy",
-          "Properties": {
-            "ManagedPolicyName": "LambdaNotificationOverclockingPolicy",
-            "Description": "Allow Lambda to read S3 files and send emails via SES",
-            "Path": "/",
-            "PolicyDocument": {
-              "Version": "2012-10-17",
-              "Statement": [
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "s3:ListBucket",
-                    "s3:GetBucketLocation"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::insumos-artemis-dev"
-                  ]
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "s3:GetObject"
-                  ],
-                  "Resource": [
-                    "arn:aws:s3:::insumos-artemis-dev/*"
-                  ]
-                },
-                {
-                  "Effect": "Allow",
-                  "Action": [
-                    "ses:SendEmail",
-                    "ses:SendRawEmail"
-                  ],
-                  "Resource": "*"
-                }
-              ]
-            }
-          }
-        }
-      },
-      "Outputs": {
-        "ServerlessDeploymentBucketName": {
-          "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
-          "Export": {
-            "Name": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
-          }
-        }
-      }
-    }
+    "serviceProviderAwsCfStackStatus": null,
+    "serviceProviderAwsCfStackOutputs": null
   }
 }

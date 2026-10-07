@@ -1,0 +1,51 @@
+service: ammper-bpc-dev-manager-functions
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    INSTANCE_ID: ${self:custom.config.${self:custom.stage}.instance_id}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      account_id: "130871271678"
+      memory_size: 128
+      # Reemplaza con el ID de tu EC2. Esta variable indica cuál instancia se prenderá o apagará.
+      instance_id: "i-070be5a7f38a8714d"
+    prod:
+      account_id: "130871271678"
+      memory_size: 128
+      instance_id: "i-070be5a7f38a8714d"
+
+functions:
+  startEc2:
+    name: ammper-bpc-dev-manager-start-${self:custom.stage}
+    handler: handler.start_ec2
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/AmmperBpcDevManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    events:
+      - schedule:
+          # Para encender a las 12:45pm (12:45) hora del centro de México (UTC-6) -> 18:45 UTC de Lunes a Viernes
+          rate: cron(45 18 ? * MON-FRI *)
+          enabled: true
+
+  stopEc2:
+    name: ammper-bpc-dev-manager-stop-${self:custom.stage}
+    handler: handler.stop_ec2
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/AmmperBpcDevManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    events:
+      - schedule:
+          # Para apagar a las 7:15pm (19:15) hora del centro de México (UTC-6) -> 01:15 UTC del día siguiente
+          # Lunes a Viernes en México (19:15) equivale a Martes a Sábado en UTC (01:15)
+          rate: cron(15 1 ? * TUE-SAT *)
+          enabled: true

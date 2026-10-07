@@ -7,7 +7,7 @@
     "provider": {
       "name": "aws",
       "runtime": "python3.12",
-      "stage": "prod",
+      "stage": "dev",
       "region": "us-east-1",
       "environment": {
         "REGION": "us-east-1"
@@ -60,7 +60,7 @@
                       "s3:GetBucketLocation"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev"
+                      "arn:aws:s3:::test-edwin-notificaciones"
                     ]
                   },
                   {
@@ -69,7 +69,7 @@
                       "s3:GetObject"
                     ],
                     "Resource": [
-                      "arn:aws:s3:::insumos-artemis-dev/*"
+                      "arn:aws:s3:::test-edwin-notificaciones/*"
                     ]
                   },
                   {
@@ -89,14 +89,14 @@
           "ServerlessDeploymentBucketName": {
             "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
             "Export": {
-              "Name": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
+              "Name": "sls-mflores-notification-overclocking-role-dev-ServerlessDeploymentBucketName"
             }
           }
         }
       }
     },
     "custom": {
-      "stage": "prod",
+      "stage": "dev",
       "my-region": "us-east-1",
       "config": {
         "dev": {
@@ -156,7 +156,7 @@
                     "s3:GetBucketLocation"
                   ],
                   "Resource": [
-                    "arn:aws:s3:::insumos-artemis-dev"
+                    "arn:aws:s3:::test-edwin-notificaciones"
                   ]
                 },
                 {
@@ -165,7 +165,7 @@
                     "s3:GetObject"
                   ],
                   "Resource": [
-                    "arn:aws:s3:::insumos-artemis-dev/*"
+                    "arn:aws:s3:::test-edwin-notificaciones/*"
                   ]
                 },
                 {
@@ -202,7 +202,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/mflores-notification-overclocking-role/prod/1783715313641-2026-07-10T20:28:33.641Z",
+    "artifactDirectoryName": "serverless/mflores-notification-overclocking-role/dev/1785180720854-2026-07-27T19:32:00.854Z",
     "artifact": ""
   }
 }

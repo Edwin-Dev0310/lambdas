@@ -1,0 +1,22 @@
+service: mflores-send-form-ap-role
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-west-1'}
+  config:
+    prod:
+      account_id: '625424230476'
+    dev:
+      account_id: '625424230476'
+
+resources:
+- ${file(roles.yml)}
+- ${file(policies.yml)}

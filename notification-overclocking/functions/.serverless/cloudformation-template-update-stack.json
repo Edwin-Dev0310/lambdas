@@ -13,7 +13,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
-          "S3Key": "serverless/mflores-notification-overclocking-functions/prod/1783716381586-2026-07-10T20:46:21.586Z/mflores-notification-overclocking-functions.zip"
+          "S3Key": "serverless/mflores-notification-overclocking-functions/prod/1785206270411-2026-07-28T02:37:50.411Z/mflores-notification-overclocking-functions.zip"
         },
         "Handler": "handler.notify_overclocking",
         "Runtime": "python3.14",
@@ -55,14 +55,14 @@
         "NotifyOverclockingLogGroup"
       ]
     },
-    "NotifyOverclockingLambdaVersionZFscPyPGU7tDtkKl1Qs4MF0UTDVscyNHUcqrE0B63A": {
+    "NotifyOverclockingLambdaVersion5XTxu3wLLJAyloYzbogL8beiNqz1TU1OjDGBj3zpAc": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "NotifyOverclockingLambdaFunction"
         },
-        "CodeSha256": "akSjUmhV0hvZ+o3GiCY2nafXDWbNzAq0PdUu8Myy9LQ="
+        "CodeSha256": "3tj7xwzZjd2AfysJWQyXGjnmdRAanl8p2Bkbv7hbJQ4="
       }
     },
     "NotifyOverclockingEventsRuleSchedule1": {
@@ -113,7 +113,7 @@
     "NotifyOverclockingLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "NotifyOverclockingLambdaVersionZFscPyPGU7tDtkKl1Qs4MF0UTDVscyNHUcqrE0B63A"
+        "Ref": "NotifyOverclockingLambdaVersion5XTxu3wLLJAyloYzbogL8beiNqz1TU1OjDGBj3zpAc"
       },
       "Export": {
         "Name": "sls-mflores-notification-overclocking-functions-prod-NotifyOverclockingLambdaFunctionQualifiedArn"

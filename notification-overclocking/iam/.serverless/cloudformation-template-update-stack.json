@@ -45,7 +45,7 @@
                 "s3:GetBucketLocation"
               ],
               "Resource": [
-                "arn:aws:s3:::insumos-artemis-dev"
+                "arn:aws:s3:::test-edwin-notificaciones"
               ]
             },
             {
@@ -54,7 +54,7 @@
                 "s3:GetObject"
               ],
               "Resource": [
-                "arn:aws:s3:::insumos-artemis-dev/*"
+                "arn:aws:s3:::test-edwin-notificaciones/*"
               ]
             },
             {
@@ -74,7 +74,7 @@
     "ServerlessDeploymentBucketName": {
       "Value": "serverless-framework-deployments-us-east-1-2d6760da-ace6",
       "Export": {
-        "Name": "sls-mflores-notification-overclocking-role-prod-ServerlessDeploymentBucketName"
+        "Name": "sls-mflores-notification-overclocking-role-dev-ServerlessDeploymentBucketName"
       }
     }
   }
