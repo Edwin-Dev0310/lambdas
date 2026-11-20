@@ -1,0 +1,62 @@
+service: mflores-s3-extraction-functions
+
+provider:
+  name: aws
+  runtime: python3.14
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  apiGateway:
+    apiKeys:
+      - name: mflores-s3-extraction-${self:custom.stage}-key
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    BUCKET_NAME: ${self:custom.config.${self:custom.stage}.bucket_name}
+    SOURCE_PREFIX: ${self:custom.config.${self:custom.stage}.source_prefix}
+    PROCESSED_PREFIX: ${self:custom.config.${self:custom.stage}.processed_prefix}
+    URL_EXPIRATION_SECONDS: ${self:custom.config.${self:custom.stage}.url_expiration_seconds}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "857285351963"
+      memory_size: 256
+      bucket_name: "energrid-documents"
+      source_prefix: "fractal/scada/"
+      processed_prefix: "fractal/processed/"
+      url_expiration_seconds: 300
+    prod:
+      my-region: us-east-1
+      account_id: "857285351963"
+      memory_size: 256
+      bucket_name: "energrid-documents"
+      source_prefix: "fractal/scada/"
+      processed_prefix: "fractal/processed/"
+      url_expiration_seconds: 300
+  pythonRequirements:
+    useDownloadCache: true
+    useStaticCache: true
+    cacheLocation: "../cache_python_requirements_plugin"
+    staticCacheMaxVersions: 5
+    fileName: requirements.txt
+
+functions:
+  s3ExtractionGateway:
+    name: mflores-s3-extraction-${self:custom.stage}
+    handler: handler.lambda_handler
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaS3ExtractionGatewayRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    tags:
+      project-name: mflores-s3-extraction
+      env: ${self:custom.stage}
+    events:
+      - http:
+          path: files
+          method: post
+          private: true
+
+plugins:

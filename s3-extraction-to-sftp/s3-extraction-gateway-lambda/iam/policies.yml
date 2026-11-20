@@ -1,0 +1,22 @@
+Resources:
+  LambdaS3ExtractionGatewayPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: LambdaS3ExtractionGatewayPolicy
+      Description: Permisos minimos para listar, leer, escribir y eliminar objetos del bucket configurado
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - s3:ListBucket
+            Resource:
+              - arn:aws:s3:::${self:custom.config.${self:custom.stage}.bucket_name}
+          - Effect: Allow
+            Action:
+              - s3:GetObject
+              - s3:PutObject
+              - s3:DeleteObject
+            Resource:
+              - arn:aws:s3:::${self:custom.config.${self:custom.stage}.bucket_name}/*

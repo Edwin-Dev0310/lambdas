@@ -1,0 +1,45 @@
+service: mflores-minador-send-email-functions
+
+provider:
+  name: aws
+  runtime: python3.14
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  httpApi: # Configuración del HTTP API
+    cors: true
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    EMAIL_SUBJECT: Alerta de Minador
+    SENDER_EMAIL: vrico@ammper.com
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      my-region: us-east-1
+      account_id: "886815432397"
+      memory_size: 1024
+    prd:
+      my-region: us-east-1
+      account_id: "886815432397"
+      memory_size: 1024
+  pythonRequirements:
+    useDownloadCache: true
+    useStaticCache: true
+    cacheLocation: "../cache_python_requirements_plugin"
+    staticCacheMaxVersions: 5
+    fileName: requirements.txt
+
+functions:
+  sendEmail:
+    handler: handler.send_email
+    role: arn:aws:iam::${self:custom.config.dev.account_id}:role/MinadorLambdaSendEmailRole
+    tags:
+      dev: mflores
+      project-name: minador-send-email-screenshot
+      env: ${self:custom.stage}
+    events:
+      - httpApi:
+          path: /minador-send-email
+          method: POST

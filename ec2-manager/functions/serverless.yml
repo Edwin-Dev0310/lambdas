@@ -1,0 +1,53 @@
+service: mflores-ec2-manager-functions
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    INSTANCE_ID: ${self:custom.config.${self:custom.stage}.instance_id}
+    SECRET_PARAM: ${self:custom.config.${self:custom.stage}.secret_param}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      account_id: "857285351963"
+      memory_size: 128
+      # Reemplaza con el ID de tu EC2
+      instance_id: "i-03ea83cb3ff698641"
+      # Parámetro esperado en el endpoint
+      secret_param: "4f9b2d3c1a8e7f6d5c4b3a2910874563"
+    prod:
+      account_id: "857285351963"
+      memory_size: 128
+      instance_id: "i-03ea83cb3ff698641"
+      secret_param: "4f9b2d3c1a8e7f6d5c4b3a2910874563"
+
+functions:
+  startEc2:
+    name: mflores-ec2-start-${self:custom.stage}
+    handler: handler.start_ec2
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaEC2ManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    events:
+      - http:
+          path: start-ec2
+          method: get
+
+  stopEc2:
+    name: mflores-ec2-stop-${self:custom.stage}
+    handler: handler.stop_ec2
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/LambdaEC2ManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    events:
+      - schedule:
+          # Para apagar a las 7pm (19:00) hora del centro de México (UTC-6) -> 03:00 UTC
+          rate: cron(0 1 * * ? *)
+          enabled: true

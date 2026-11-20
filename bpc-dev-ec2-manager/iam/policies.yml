@@ -1,0 +1,21 @@
+Resources:
+  BpcDevLambdaEC2ManagerPolicy:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyName: BpcDevLambdaEC2ManagerPolicy
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action:
+              - logs:CreateLogGroup
+              - logs:CreateLogStream
+              - logs:PutLogEvents
+            Resource: arn:aws:logs:*:*:*
+          - Effect: Allow
+            Action:
+              - ec2:StartInstances
+              - ec2:DescribeInstances
+            Resource: "*"
+      Roles:
+        - Ref: BpcDevLambdaEC2ManagerRole

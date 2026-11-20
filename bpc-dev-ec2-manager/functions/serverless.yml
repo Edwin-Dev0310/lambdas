@@ -1,0 +1,41 @@
+service: mflores-bpc-dev-ec2-manager
+
+provider:
+  name: aws
+  runtime: python3.12
+  stage: ${self:custom.stage}
+  region: ${self:custom.my-region}
+  environment:
+    REGION: ${self:provider.region}
+    STAGE: ${self:custom.stage}
+    INSTANCE_ID: ${self:custom.config.${self:custom.stage}.instance_id}
+    SECRET_PARAM: ${self:custom.config.${self:custom.stage}.secret_param}
+
+custom:
+  stage: ${opt:stage, 'dev'}
+  my-region: ${opt:region, 'us-east-1'}
+  config:
+    dev:
+      account_id: "130871271678"
+      memory_size: 128
+      # Reemplaza con el ID de tu EC2
+      instance_id: "i-070be5a7f38a8714d"
+      # Parámetro esperado en el endpoint
+      secret_param: "bpc-dev-ec2-on"
+    prod:
+      account_id: "130871271678"
+      memory_size: 128
+      instance_id: "i-070be5a7f38a8714d"
+      secret_param: "bpc-dev-ec2-on"
+
+functions:
+  startEc2:
+    name: bpc-dev-ec2-start-${self:custom.stage}
+    handler: handler.start_ec2
+    role: arn:aws:iam::${self:custom.config.${self:custom.stage}.account_id}:role/BpcDevLambdaEC2ManagerRole
+    memorySize: ${self:custom.config.${self:custom.stage}.memory_size}
+    timeout: 30
+    events:
+      - http:
+          path: start-ec2
+          method: get

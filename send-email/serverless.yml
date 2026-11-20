@@ -1,0 +1,33 @@
+service: send-email-image
+
+provider:
+  name: aws
+  runtime: python3.9
+  region: us-east-1
+  environment:
+    SENDER_EMAIL: ${env:SENDER_EMAIL, 'email'}
+    EMAIL_SUBJECT: ${env:EMAIL_SUBJECT, 'Image Email'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - ses:SendEmail
+            - ses:SendRawEmail
+          Resource: "*"
+
+functions:
+  sendEmailWithImage:
+    handler: handler.send_email_with_image
+    events:
+      - http:
+          path: send-email
+          method: post
+          cors: true
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: non-linux

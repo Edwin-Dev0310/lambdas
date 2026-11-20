@@ -1,0 +1,3 @@
+-r functions/requirements.txt
+pytest>=8.0,<9.0
+moto[s3]>=5.0,<6.0

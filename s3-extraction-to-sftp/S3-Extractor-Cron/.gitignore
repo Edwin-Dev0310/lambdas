@@ -1,0 +1,10 @@
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+logs/*.log
+logs/*.log.*
+downloads/*
+!downloads/.gitkeep
+!logs/.gitkeep

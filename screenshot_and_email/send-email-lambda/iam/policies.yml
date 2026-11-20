@@ -1,0 +1,16 @@
+Resources:
+  MinadorLambdaSendEmailPolicy:
+    Type: AWS::IAM::ManagedPolicy
+    Properties:
+      ManagedPolicyName: MinadorLambdaSendEmailPolicy
+      Description: Allow Lambda to send emails via SES
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Action:
+              - ses:SendEmail
+              - ses:SendRawEmail
+            Resource: "*"
+
